@@ -123,14 +123,19 @@ def test_every_shell_example_runs(qmd: Path, tmp_path: Path) -> None:
 # the budget is per page and deliberately tight. Raising a number here is a
 # decision to be justified in the same commit, not a formality.
 NO_RUN_BUDGET = {
-    # `man` need not exist on a minimal image; `less` is interactive.
-    "01-command-line": 3,
+    # `man` need not exist on a minimal image; `less` is interactive; `head
+    # --help` is GNU-only; and one deliberately fictional `some_tool` call
+    # shows the shape of a real multi-parameter invocation without tying the
+    # page to any one field's software.
+    "01-command-line": 4,
     # Installing software needs the network and minutes of runtime, and the
     # whole point of the page is the installer you do not yet have. Almost
     # nothing here can honestly run in CI.
-    "02-packages": 30,
-    # Local git is fully testable; only the GitHub round trip is not, because
-    # it needs credentials and a real remote.
+    "02-packages": 10,
+    # Local git is fully testable and is fully tested. The exemptions are the
+    # GitHub round trip only: remote add, push, pull, clone, the everyday loop,
+    # and the branch push that precedes a pull request. All need credentials
+    # and a real remote.
     "03-git": 8,
     # Text formats: everything is checkable with local tools.
     "04-file-formats": 2,

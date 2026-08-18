@@ -376,6 +376,49 @@ alpha
 
 Here `-n` takes the value `1`, and `data/first.txt` is the argument.
 
+## A realistic invocation
+
+One flag on a small command is not what a real call looks like. Here is one that
+is: `sort` is an ordinary tool, and this asks it to sort a table by its second
+column, numerically, largest first.
+
+```bash
+printf "alpha,12\nbeta,7\ngamma,103\n" > scores.csv
+sort -t, -k2 -n -r scores.csv
+```
+
+```text
+gamma,103
+alpha,12
+beta,7
+```
+
+Four parameters, and each does one thing:
+
+| | |
+|---|---|
+| `-t,` | the columns are separated by commas |
+| `-k2` | sort on column 2 |
+| `-n` | compare as **n**umbers, not text |
+| `-r` | **r**everse, so largest first |
+
+Drop `-n` and `103` sorts before `12`, because as *text* it begins with a `1`
+followed by a `0`. That is not a bug — it is the difference between what you
+asked for and what you meant, and it is exactly the kind of thing parameters
+exist to pin down.
+
+Serious tools take more of these, and often mix the two styles:
+
+```{.bash .no-run}
+some_tool --input data/ --output results/ -t 4 --verbose
+```
+
+You are not expected to recognise a tool to read that. `--input` and `--output`
+say where things come from and go, `-t 4` is almost always "use 4 threads", and
+`--verbose` asks it to say more about what it is doing. **Read an unfamiliar
+command by its parameters** — the shape is nearly always the same, whatever the
+tool does.
+
 ::: {.callout-tip}
 ## Prefer long parameters in anything you keep
 

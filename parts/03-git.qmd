@@ -201,7 +201,22 @@ git add analysis.py
 git commit -m "Try a new idea"
 ```
 
-`-c` creates the branch and moves you onto it. Switch back:
+`-c` creates the branch and moves you onto it. To see what branches exist, and
+which one you are on:
+
+```bash
+git branch
+```
+
+```text
+  experiment
+* main
+```
+
+The `*` marks where you are. `git status` says the same thing in its first line,
+which is why it is worth reading before anything else.
+
+Switch back:
 
 ```bash
 git switch main
@@ -298,6 +313,89 @@ git commit -m "Describe what you did"
 git push                          # send it back
 ```
 
+# Working in a shared repository
+
+If several of you share one repository and all commit to `main`, you will hit
+this within the first hour:
+
+```text
+ ! [rejected]        main -> main (fetch first)
+```
+
+Someone else pushed while you were working. Nothing is broken and nothing is
+lost — Git is refusing to overwrite their work with yours. `git pull`, sort out
+anything that conflicts, then push again.
+
+That works, but it gets tiring, and it means every half-finished change lands
+straight on the branch everyone else is using. The usual answer is the one from
+the previous section: **work on a branch, and merge it when it is ready.**
+
+## Branch, push, pull request
+
+```bash
+git switch -c add-quality-filter
+```
+
+Do the work, commit it as usual, then push **the branch** rather than `main`:
+
+```{.bash .no-run}
+git push -u origin add-quality-filter
+```
+
+`-u` links your local branch to the one on the server, so afterwards plain
+`git push` is enough.
+
+Then open a **pull request** (PR) on GitHub. Despite the name, nothing is being
+pulled by you: a PR is a request that *your* branch be merged into `main`, with
+a place to discuss it first.
+
+::: {.callout-note}
+## This part is done in the browser
+
+After you push a branch, GitHub shows a **Compare & pull request** button on the
+repository's front page. From there: check that the base branch is `main` and
+the compare branch is yours, give it a title and a sentence saying what it does,
+and create it.
+
+Anyone on the team can then read the change, comment on specific lines, and
+click **Merge pull request** when it is agreed. Afterwards, back in your
+terminal:
+
+```{.bash .no-run}
+git switch main
+git pull
+```
+
+so your local `main` catches up with what was just merged.
+:::
+
+::: {.callout-warning}
+## The exact buttons move
+
+GitHub redesigns its interface regularly, so the names and positions above are
+what to look for rather than a guaranteed click path. The underlying steps do
+not change: push a branch, open a request to merge it, agree, merge.
+:::
+
+## Why bother, for a small team
+
+Three reasons that hold even for two people:
+
+- **`main` always works.** Half-finished work sits on a branch, so nobody else
+  inherits it.
+- **Somebody read it.** A PR is the natural place for a second pair of eyes,
+  which catches more than any tool.
+- **It records the reasoning.** The discussion stays attached to the change, so
+  in six months the repository answers *why*, not just *what*.
+
+::: {.callout-tip}
+## Small pull requests get reviewed; large ones get approved
+
+A PR touching one thing gets read properly. A PR touching nineteen things gets a
+thumbs-up and no attention, which defeats the point. Merge more often rather
+than less.
+:::
+
 ::: {.callout-tip}
 ## Make a GitHub profile, and treat it as one
 
@@ -345,8 +443,10 @@ answer to a beginner's problem.
 - [ ] See what changed with `git status`, `git diff` and `git log`.
 - [ ] Recover a file you broke but had not committed.
 - [ ] Say why data does not belong in a repository, and what does.
-- [ ] Make a branch, commit on it, and merge it back.
+- [ ] Make a branch, commit on it, list branches, and merge it back.
 - [ ] Push to GitHub and pull from it.
+- [ ] Say what to do when a push is rejected.
+- [ ] Push a branch and open a pull request from it.
 
 # Where to go next
 

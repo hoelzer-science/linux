@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340" width="900" height="340"
+     font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" role="img"
+     aria-label="The Linux filesystem drawn as a tree. A single root directory, written as a forward slash, branches into home, bin and etc. home branches into user1, user2 and user3. user1 branches into Documents, Downloads and the files notes.md, data.csv and myscript.sh. bin contains the programs ls, mkdir and bash. Every absolute path is a route from the root to one of these.">
+  <!--
+    Hand-written rather than generated: nothing here is computed, so a
+    generator would add a dependency and a build step to redraw a fixed
+    picture. Modelled on the layout of the figure in the dropped deck, but
+    drawn from scratch. That deck credits an outside contributor, and this
+    repository is public, so an own figure is the only one safe to ship
+    without establishing someone else's permission first.
+
+    Note for editors: a double hyphen is illegal inside an XML comment. It
+    makes the file invalid SVG, which browsers may tolerate and ImageMagick
+    will not.
+
+    Colours are set explicitly. Quarto's cosmo theme is light, and a
+    transparent-background diagram inheriting a dark viewer would vanish.
+  -->
+  <style>
+    .node  { fill: #cdf3cd; stroke: #1a1a1a; stroke-width: 2; }
+    .edge  { stroke: #1a1a1a; stroke-width: 2; fill: none; }
+    .lbl   { font-size: 17px; fill: #1a1a1a; }
+    .file  { font-size: 17px; fill: #1a1a1a; }
+    .note  { font-size: 15px; fill: #555; font-family: system-ui, sans-serif; }
+    .dots  { font-size: 20px; fill: #1a1a1a; font-weight: bold; }
+  </style>
+
+  <!-- root -->
+  <text class="note" x="16" y="150" >root</text>
+  <text class="note" x="16" y="168">directory</text>
+  <rect class="node" x="12" y="182" width="92" height="42" rx="21"/>
+  <text class="lbl" x="58" y="209" text-anchor="middle">/</text>
+
+  <!-- root spine -->
+  <path class="edge" d="M104 203 H140"/>
+  <path class="edge" d="M140 40 V300"/>
+
+  <!-- level 1: home, bin, etc -->
+  <path class="edge" d="M140 40 H176"/>
+  <rect class="node" x="176" y="19" width="118" height="42" rx="21"/>
+  <text class="lbl" x="235" y="46" text-anchor="middle">home/</text>
+
+  <path class="edge" d="M140 203 H176"/>
+  <rect class="node" x="176" y="182" width="118" height="42" rx="21"/>
+  <text class="lbl" x="235" y="209" text-anchor="middle">bin/</text>
+
+  <path class="edge" d="M140 280 H176"/>
+  <rect class="node" x="176" y="259" width="118" height="42" rx="21"/>
+  <text class="lbl" x="235" y="286" text-anchor="middle">etc/</text>
+
+  <text class="dots" x="134" y="322">⋮</text>
+
+  <!-- home spine -->
+  <path class="edge" d="M294 40 H330"/>
+  <path class="edge" d="M330 25 V125"/>
+
+  <path class="edge" d="M330 25 H366"/>
+  <rect class="node" x="366" y="4" width="130" height="40" rx="20"/>
+  <text class="lbl" x="431" y="30" text-anchor="middle">user1/</text>
+
+  <path class="edge" d="M330 75 H366"/>
+  <rect class="node" x="366" y="55" width="130" height="40" rx="20"/>
+  <text class="lbl" x="431" y="81" text-anchor="middle">user2/</text>
+
+  <path class="edge" d="M330 125 H366"/>
+  <rect class="node" x="366" y="105" width="130" height="40" rx="20"/>
+  <text class="lbl" x="431" y="131" text-anchor="middle">user3/</text>
+
+  <text class="dots" x="324" y="160">⋮</text>
+
+  <!-- bin contents -->
+  <path class="edge" d="M294 203 H330"/>
+  <path class="edge" d="M330 180 V255"/>
+  <path class="edge" d="M330 180 H360"/>
+  <text class="file" x="368" y="186">ls</text>
+  <path class="edge" d="M330 217 H360"/>
+  <text class="file" x="368" y="223">mkdir</text>
+  <path class="edge" d="M330 255 H360"/>
+  <text class="file" x="368" y="261">bash</text>
+
+  <text class="dots" x="324" y="288">⋮</text>
+
+  <!-- user1 contents -->
+  <path class="edge" d="M496 25 H532"/>
+  <path class="edge" d="M532 22 V212"/>
+
+  <path class="edge" d="M532 22 H568"/>
+  <rect class="node" x="568" y="3" width="182" height="38" rx="19"/>
+  <text class="lbl" x="659" y="28" text-anchor="middle">Documents/</text>
+
+  <path class="edge" d="M532 70 H568"/>
+  <rect class="node" x="568" y="51" width="182" height="38" rx="19"/>
+  <text class="lbl" x="659" y="76" text-anchor="middle">Downloads/</text>
+
+  <path class="edge" d="M532 118 H568"/>
+  <text class="file" x="576" y="124">notes.md</text>
+
+  <path class="edge" d="M532 165 H568"/>
+  <text class="file" x="576" y="171">data.csv</text>
+
+  <path class="edge" d="M532 212 H568"/>
+  <text class="file" x="576" y="218">myscript.sh</text>
+
+  <text class="dots" x="526" y="246">⋮</text>
+</svg>

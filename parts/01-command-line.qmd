@@ -24,31 +24,25 @@ program that reads what you type and runs it is the **shell** (dt. *Kommando­ze
 or *Shell*). Almost everywhere you will meet, the shell is `bash` or the very
 similar `zsh`.
 
-**Linux** — search the applications menu for *Terminal*. On Ubuntu,
-<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd> opens one directly.
+::: {.callout-important}
+## This material targets Linux
 
-**macOS** — *Terminal* lives in `Applications → Utilities`. Spotlight
-(<kbd>⌘</kbd>+<kbd>Space</kbd>, type "terminal") is quicker. macOS is Unix
-underneath, so the concepts and nearly all the commands here work unchanged.
+Specifically **Ubuntu**, which is what you are most likely to sit in front of.
+Everything here is written and tested for that.
 
-::: {.callout-note}
-## One real macOS difference, worth knowing now
-
-Linux ships the **GNU** versions of the basic tools; macOS ships the older
-**BSD** versions. They agree on the important things and differ at the edges —
-most visibly, BSD tools generally do **not** accept `--help` or long parameter
-names like `--lines`, only the short `-n` form.
-
-Where this page could go either way it uses the portable form, so everything
-here runs on both. But if you copy a command from the internet and macOS says
-`unrecognized option`, this is usually why, and the fix is usually the short
-parameter.
+Windows via WSL2 is Linux, so it counts. macOS is close but not the same, and
+the gaps are noted where they matter — but a Mac is not a platform this material
+can promise to cover completely.
 :::
 
+**Linux** — search the applications menu for *Terminal*. On Ubuntu,
+<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd> opens one directly. This is the case
+everything below assumes.
+
 **Windows** — you need **WSL2** (Windows Subsystem for Linux), which runs a real
-Linux inside Windows. This is not optional or a second-best: much scientific
-software has no Windows build at all, so the Windows answer to "how do I run
-this" is genuinely "run Linux". In PowerShell, as administrator:
+Ubuntu inside Windows. This is not a second-best: much scientific software has
+no Windows build at all, so the Windows answer to "how do I run this" is
+genuinely "run Linux". In PowerShell, as administrator:
 
 ```powershell
 wsl --install
@@ -56,7 +50,7 @@ wsl --install
 
 Reboot, let it finish setting up, choose a username and password, and from then
 on start *Ubuntu* from the Start menu. Everything below then applies to you
-exactly as written.
+exactly as written, because you are now running Linux.
 
 ::: {.callout-warning}
 ## Do this before the practical, not during it
@@ -64,6 +58,25 @@ exactly as written.
 The WSL2 install needs a reboot and a download, and occasionally needs
 virtualisation switched on in the BIOS. That is a fine thing to sort out on a
 quiet evening and a bad thing to discover in the first ten minutes of a session.
+:::
+
+**macOS** — *Terminal* lives in `Applications → Utilities`; Spotlight
+(<kbd>⌘</kbd>+<kbd>Space</kbd>, type "terminal") is quicker. macOS is Unix
+underneath, so the concepts all transfer and most commands work unchanged.
+
+::: {.callout-note}
+## If you are on a Mac, expect some things to differ
+
+Linux ships the **GNU** versions of the basic tools; macOS ships the older
+**BSD** versions. They agree on the important things and differ at the edges —
+most visibly, BSD tools generally do **not** accept `--help` or long parameter
+names like `--lines`, only the short `-n` form.
+
+This page sticks to the portable form wherever it can, so the examples here run
+on both. Beyond this page, though, a Mac will occasionally disagree with the
+instructions — most often with `unrecognized option`, for exactly this reason,
+and the fix is usually the short parameter. Not everything can be covered for
+every platform, and Linux is the one that is.
 :::
 
 ## What you are looking at
@@ -122,22 +135,78 @@ ls -lh
 That last one is two parameters combined into one word, which is normal and
 worth noticing now: `-lh` means exactly `-l -h`.
 
-## Directories and paths
+### Reading `ls -l` output
 
-A **path** (dt. *Pfad*) is a file or directory's address. There are two kinds,
-and the difference matters more than anything else in this section.
-
-An **absolute path** starts at the root of the filesystem, `/`, and is therefore
-unambiguous from anywhere:
+A long listing packs six things onto one line:
 
 ```text
-/home/user/projects/data/samples.csv
+-rw-r--r--  1  user1  staff  1048576  Sep 26 07:08  data.csv
 ```
 
-A **relative path** starts from wherever you currently are:
+| | |
+|---|---|
+| `-rw-r--r--` | who may read, write and run it. A leading `d` here means it is a **d**irectory. |
+| `1` | number of links — ignore it for now |
+| `user1` | the owner |
+| `staff` | the owner's group |
+| `1048576` | size in bytes (`-h` turns this into `1.0M`) |
+| `Sep 26 07:08` | when it was last changed |
+
+You do not need to decode permissions today. It is worth knowing the column
+exists, because `Permission denied` later on is this column talking.
+
+::: {.callout-important}
+## Everything is case-sensitive
+
+`Data.csv`, `data.csv` and `DATA.CSV` are three different files, and `LS` is not
+a command. Windows does not work this way, so this catches people constantly —
+and the error you get (`No such file or directory`) does not mention case, so it
+reads as "the file is missing" when the file is right there.
+:::
+
+## The filesystem is one tree
+
+Everything on the machine hangs off a **single** directory called the **root**,
+written `/`. There are no drive letters — no `C:`, no `D:`. A USB stick, a
+second hard disk and a network share all appear as directories *somewhere inside
+that one tree*.
+
+This is the biggest structural difference from Windows, and it is worth looking
+at before paths will make sense.
+
+![The filesystem is a single tree with `/` at its root. Directories branch;
+files are leaves. Your own files live under `/home/<your name>/`.](../figures/filesystem-tree.svg){#fig-tree
+fig-alt="A tree diagram. A single root node labelled forward-slash branches into
+three directories: home, bin and etc. home branches into user1, user2 and user3.
+user1 branches into Documents and Downloads, plus three files: notes.md,
+data.csv and myscript.sh. bin contains three programs: ls, mkdir and bash."}
+
+Two parts of that tree you will meet immediately:
+
+- **`/home/<your name>/`** — your own files. This is where you start, and where
+  almost all your work belongs. It has a shorthand: `~`.
+- **`/bin`, `/usr/bin`** — the programs themselves. `ls` is a file on disk, and
+  it lives here. That is worth knowing: a command is not magic, it is a program
+  in a directory, which is why "command not found" is a *file* problem.
+
+## Directories and paths
+
+A **path** (dt. *Pfad*) is a file or directory's address — a route through that
+tree. There are two kinds, and the difference matters more than anything else in
+this section.
+
+An **absolute path** starts at the root, `/`, and is therefore unambiguous from
+anywhere. Read it against @fig-tree — it is the route from `/` down to the file:
 
 ```text
-data/samples.csv
+/home/user1/data.csv
+```
+
+A **relative path** starts from wherever you currently are. Standing in
+`/home/user1`, the same file is just:
+
+```text
+data.csv
 ```
 
 The second is shorter and is what you will type most of the time. It is also why
@@ -415,10 +484,53 @@ less data/first.txt
 Same navigation: arrows and <kbd>Space</kbd> to move, `/word` to search, `q` to
 quit.
 
+## Editing files: use VS Code
+
+Sooner or later you need to *change* a file, not just look at it. There are
+terminal editors — `nano` is the gentle one, `vim` the one people make jokes
+about — and you will meet them eventually, especially on a server where nothing
+else is available.
+
+**For everything else, use [Visual Studio Code](https://code.visualstudio.com).**
+This is a strong recommendation, not a neutral menu:
+
+- It edits files and gives you a **terminal in the same window**, so you stop
+  alt-tabbing between a file and the command that reads it.
+- It handles the formats you will actually meet — Markdown, JSON, CSV, YAML,
+  Python — with syntax highlighting that makes a malformed file *look* malformed.
+- Its **Remote — WSL** extension means Windows users edit Linux files natively,
+  with no copying back and forth. On Windows this is close to essential.
+- It is free, and it is what a great deal of the field uses, so help is easy to
+  find.
+
+::: {.callout-warning}
+## Do not edit these files in Word
+
+A word processor will silently add formatting, curly quotes and its own line
+endings. A file that looks perfect on screen then fails to parse, and the error
+message will not mention any of that. Use a text editor for text.
+:::
+
 # Redirection and pipes
 
 This is the part that makes a command line worth learning, and the part that has
 no equivalent in a graphical program.
+
+## Three streams, not one
+
+Every command has three channels, and knowing their names explains several
+things that otherwise look like bugs:
+
+| stream | | |
+|---|---|---|
+| **stdin** | standard input | what goes *in* — usually what you type, or another command's output |
+| **stdout** | standard output | the actual result |
+| **stderr** | standard error | warnings and error messages |
+
+The important consequence: **`>` and `|` move stdout only.** Errors and warnings
+keep going to the screen. So if you redirect a command's output to a file and
+still see red text, nothing is broken — that was stderr, which is exactly the
+design. It means an error can never silently end up inside your results file.
 
 ## Sending output to a file
 
@@ -624,13 +736,16 @@ practical assumes.
 - [ ] Open a terminal, and on Windows have WSL2 working.
 - [ ] Say where you are (`pwd`) and what is there (`ls`).
 - [ ] Move around with `cd`, including `..` and `~`.
+- [ ] Explain why there is no `C:` drive, and what `/` is.
 - [ ] Tell an absolute path from a relative one, and explain why it matters.
+- [ ] Have VS Code installed, and on Windows the Remote — WSL extension.
 - [ ] Make a directory, copy, rename and delete a file — carefully.
 - [ ] Read a command and name its parameters and arguments.
 - [ ] Read a command written across several lines with backslashes.
 - [ ] Find out what a command does, with `--help` or `man`, and quit the pager.
 - [ ] Send output to a file with `>`, and know what `>>` does differently.
 - [ ] Chain two commands with a pipe and explain what each half does.
+- [ ] Say why an error message still appears on screen when you redirect output.
 - [ ] Use `*` to act on a set of files, having checked it with `ls` first.
 - [ ] Stop a running command, and get back a command you ran earlier.
 

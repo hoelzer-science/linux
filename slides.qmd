@@ -103,6 +103,14 @@ ls -l
 `pwd`, `ls` and `cd` answer *where am I* and *what is here* — the two
 questions worth asking before anything else.
 
+::: {.callout-tip}
+## Press Tab. Every time, not just when stuck.
+
+Typing a filename from memory is a guess. Letting the shell complete it is not
+— it is spelled right or it does not exist. This is worth repeating because
+it is the single most common thing people forget under time pressure.
+:::
+
 ## Parameters change what a command does
 
 ```bash
@@ -155,7 +163,8 @@ ever pointing it at `rm`.
 
 Terminal, tree, parameters, pipes, wildcards. **[The full page →](parts/01-command-line.qmd)**
 has the backslash line-continuation, `stdin`/`stdout`/`stderr`, reading errors,
-and a checklist to test yourself against.
+a short section on `$HOME`-style variables, and a checklist to test yourself
+against.
 
 # Part 2 — Installing and managing tools
 
@@ -227,6 +236,26 @@ The GitHub side (pushing a branch, the Compare & pull request button) is
 prose on the full page, not a command — it is an interactive web UI and the
 exact buttons move, so it is described as "what to look for," not a fixed
 click path.
+:::
+
+## Your GitHub profile is worth curating
+
+**You will need an account.** At least one person per team, for the shared
+repository to exist — in practice, everyone, since each of you pushes your
+own commits.
+
+Treat it as more than a requirement: pinned repositories, a short bio, a
+clear README on each project — this becomes a portfolio you did not realise
+you were building. One real example:
+**[github.com/jonas-fuchs](https://github.com/jonas-fuchs)**.
+
+For a job in this field, that can say more than a CV — it is evidence you can
+do the work, not a claim that you can.
+
+::: {.notes}
+Worth slowing down on if presenting live — this is a genuinely useful thing
+for a UAS bioinformatics cohort to hear early, not a footnote. It does not
+need to happen this semester; it needs to *start*.
 :::
 
 ## Part 3, in one line

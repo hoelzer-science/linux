@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" width="720" height="300"
+     font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" role="img"
+     aria-label="A terminal window showing the prompt user1 at machine, colon, tilde slash projects, dollar sign, followed by a block cursor. A colour-coded key below identifies four parts: user1 is your username, machine is the computer you are on, tilde slash projects is where you are right now, and the dollar sign means the shell is ready and waiting.">
+  <!--
+    Own figure. The equivalent in the dropped deck is a whole slide with bullet
+    text baked in at 524x405, so it could not be cropped down to just the
+    prompt.
+
+    The parts are keyed by COLOUR rather than by leader lines. An earlier
+    version drew a line from each segment down to its label; because the
+    segments sit at increasing x and the labels stack downwards, every line
+    crossed the label above it and read as strikethrough. Colour keying has no
+    geometry to get wrong.
+
+    Editors: a double hyphen is illegal inside an XML comment. It makes the
+    file invalid SVG, which browsers may tolerate and ImageMagick will not.
+  -->
+  <style>
+    .win   { fill: #1c1c1c; }
+    .bar   { fill: #3a3a3a; }
+    .mono  { font-size: 22px; }
+    .user  { fill: #7ee787; }
+    .punct { fill: #c9c9c9; }
+    .path  { fill: #79c0ff; }
+    .sign  { fill: #ffa657; font-weight: bold; }
+    .cur   { fill: #e6e6e6; }
+    .term  { font-size: 15px; font-weight: 700; }
+    .desc  { font-family: system-ui, -apple-system, sans-serif; font-size: 15px; fill: #1a1a1a; }
+    .foot  { font-family: system-ui, -apple-system, sans-serif; font-size: 14px; fill: #555; }
+  </style>
+
+  <!-- terminal window -->
+  <rect class="win" x="16" y="16" width="688" height="104" rx="10"/>
+  <rect class="bar" x="16" y="16" width="688" height="26" rx="10"/>
+  <rect class="bar" x="16" y="32" width="688" height="10"/>
+  <circle cx="36" cy="29" r="5.5" fill="#ff5f57"/>
+  <circle cx="54" cy="29" r="5.5" fill="#febc2e"/>
+  <circle cx="72" cy="29" r="5.5" fill="#28c840"/>
+
+  <!--
+    textLength on every tspan pins the advance, so the cursor that follows
+    lands in the right place regardless of which monospace font resolves.
+    22px monospace advances at 0.6em = 13.2px per character.
+  -->
+  <text class="mono" x="40" y="88" xml:space="preserve"><tspan
+      class="user"  textLength="66"  lengthAdjust="spacing">user1</tspan><tspan
+      class="punct" textLength="13.2" lengthAdjust="spacing">@</tspan><tspan
+      class="user"  textLength="92.4" lengthAdjust="spacing">machine</tspan><tspan
+      class="punct" textLength="13.2" lengthAdjust="spacing">:</tspan><tspan
+      class="path"  textLength="132"  lengthAdjust="spacing">~/projects</tspan><tspan
+      class="sign"  textLength="26.4" lengthAdjust="spacing"> $</tspan></text>
+  <rect class="cur" x="390" y="70" width="12" height="24"/>
+
+  <!-- colour key -->
+  <rect x="40" y="150" width="14" height="14" fill="#7ee787" stroke="#1a1a1a" stroke-width="1"/>
+  <text class="term" x="64" y="162" fill="#1a1a1a">user1</text>
+  <text class="desc" x="180" y="162">your username</text>
+
+  <rect x="40" y="180" width="14" height="14" fill="#7ee787" stroke="#1a1a1a" stroke-width="1"/>
+  <text class="term" x="64" y="192" fill="#1a1a1a">machine</text>
+  <text class="desc" x="180" y="192">the computer you are on</text>
+
+  <rect x="40" y="210" width="14" height="14" fill="#79c0ff" stroke="#1a1a1a" stroke-width="1"/>
+  <text class="term" x="64" y="222" fill="#1a1a1a">~/projects</text>
+  <text class="desc" x="180" y="222">where you are right now</text>
+
+  <rect x="40" y="240" width="14" height="14" fill="#ffa657" stroke="#1a1a1a" stroke-width="1"/>
+  <text class="term" x="64" y="252" fill="#1a1a1a">$</text>
+  <text class="desc" x="180" y="252">the shell is ready and waiting</text>
+
+  <text class="foot" x="40" y="284">The pale block after the $ is the cursor. What you type appears there.</text>
+</svg>

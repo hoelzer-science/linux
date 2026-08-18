@@ -81,15 +81,20 @@ every platform, and Linux is the one that is.
 
 ## What you are looking at
 
-You will see something like:
+You will see something like this.
 
-```text
-user@machine:~$
-```
+![The prompt, and what each part of it tells you.](../figures/prompt-anatomy.svg){#fig-prompt
+fig-alt="A terminal window showing the prompt: user1, an at sign, machine, a
+colon, tilde slash projects, then a dollar sign and a block cursor. A key
+identifies user1 as your username, machine as the computer you are on, tilde
+slash projects as where you are right now, and the dollar sign as the shell
+being ready and waiting."}
 
-That is the **prompt**. It is the shell saying it is ready. The parts are your
-username, the machine's name, and — after the colon — **where you currently
-are** in the filesystem. The `$` marks the end of it.
+That is the **prompt**: the shell saying it is ready. The part worth watching is
+**where you currently are** — it changes as you move around, and it is the
+cheapest way to answer the question that causes most early confusion.
+
+The `$` marks the end of the prompt. You never type it.
 
 On this page, code blocks show the command *without* a prompt, so you can copy
 them cleanly. Where output is shown, it is in a separate block.
@@ -755,10 +760,12 @@ what to search for.
 
 # Where to go next
 
-**Part 2 — package management** is how you install the tools a practical asks
-for, and how you keep one project's tools from breaking another's.
+**[Part 2 — Installing and managing tools](02-packages.qmd)** is how you get the
+tools a practical asks for, and how you keep one project's tools from breaking
+another's.
 
-**Part 3 — Git** is how you keep your work, share it, and get it back after you
-break something.
+**[Part 3 — Git and GitHub](03-git.qmd)** is how you keep your work, share it,
+and get it back after you break something.
 
-Both are being written.
+**[Part 4 — Files you will meet](04-file-formats.qmd)** covers Markdown, JSON
+and tabular data, plus the two invisible things that make text files misbehave.

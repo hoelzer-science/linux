@@ -195,6 +195,9 @@ them.
 ![Own figure.](figures/git-stages.svg){fig-alt="Four boxes: Workspace, Staging area, Local repository, Remote repository. Workspace to Staging area via git add, Staging area to Local repository via git commit, Local repository to Remote repository via git push. A dashed arrow labelled git pull or git clone runs back from Remote repository to Workspace."}
 
 ```bash
+git config --global user.name "You"          # one-time, per machine
+git config --global user.email "you@example.org"
+
 mkdir -p repo && cd repo && git init -q
 echo "print('hello')" > analysis.py
 git add analysis.py

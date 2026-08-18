@@ -35,7 +35,12 @@ from pathlib import Path
 import pytest
 
 REPO = Path(__file__).resolve().parent.parent
-PARTS = sorted((REPO / "parts").glob("*.qmd"))
+# Every rendered page that may carry a shell example, not just parts/. The
+# kickoff deck reuses several of the parts' own commands, and reuse is exactly
+# where a page quietly drifts from what was actually verified -- so it is
+# tested by the same rule as everything else on the site, not exempted for
+# being a deck rather than a reference page.
+PARTS = sorted((REPO / "parts").glob("*.qmd")) + [REPO / "slides.qmd"]
 
 # Opening fence: ```bash, ```{.bash}, ```{.bash .no-run}, ``` sh, etc.
 FENCE_OPEN = re.compile(r"^(?P<ticks>`{3,})\s*\{?[.\s]*(?P<lang>bash|sh|shell)\b(?P<attrs>[^}]*)\}?\s*$")
@@ -139,6 +144,8 @@ NO_RUN_BUDGET = {
     "03-git": 8,
     # Text formats: everything is checkable with local tools.
     "04-file-formats": 2,
+    # One block: the pixi install/add teaser, for the same reason as Part 2.
+    "slides": 1,
 }
 
 

@@ -1,0 +1,130 @@
+name: validate
+
+# Validate every push and pull request; deploy main to Cloudflare Pages.
+#
+# Deploying on every push to main is safe because publishing a SESSION is a
+# separate, deliberate act: only sessions listed in the render allowlist in
+# _quarto.yml reach _site at all. So main deploys continuously, while course
+# content is released when you decide to release it.
+#
+# The rule this enforces: whatever is on main must render, its code must run,
+# and it must contain nothing students should not see.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@v0.10.0
+        with:
+          # Fails the build if pixi.lock is out of date with pixi.toml,
+          # which is what keeps the environment genuinely reproducible.
+          locked: true
+          cache: true
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Lint
+        run: pixi run lint
+
+      # Runs on node from the runner image; no dependencies. Auth code that is
+      # never exercised is how a site ends up publicly readable unnoticed.
+      - name: Test auth worker
+        run: node cloudflare/worker.test.mjs
+
+      - name: Test practical solutions
+        run: pixi run test
+
+      # Invoke the same pixi tasks a person would run locally. CI previously
+      # called publish.sh directly while `pixi run lms` called quarto directly,
+      # so a bug in the task definition passed CI and broke the real workflow.
+      - name: Render both builds
+        run: |
+          pixi run site
+          pixi run lms
+
+      - name: Show release status
+        run: pixi run status
+
+      # Broken links, and .qmd links -- which mean either an unrewritten LMS
+      # link or a link to a session held back from the render allowlist.
+      - name: Check internal links
+        run: pixi run check-links
+
+      # Solutions, instructor material, and raw source files copied in as
+      # resources -- the last happens when a page links to a held-back session.
+      - name: Check published output
+        run: pixi run check-output
+
+      # v6+ runs on Node 24; v4 triggered the Node 20 deprecation warning.
+      # Must stay in the same generation as download-artifact in the deploy
+      # job below -- the artifact format is shared between them.
+      - name: Upload rendered site
+        uses: actions/upload-artifact@v7
+        with:
+          name: site
+          path: _site/
+          retention-days: 14
+
+  deploy:
+    needs: validate
+    # Only main, and never from a pull request -- a PR from a fork must not be
+    # able to publish, nor to read the Cloudflare token.
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      # Deploy exactly the bytes that were validated, rather than re-rendering
+      # and hoping the second render matches the first.
+      - name: Download validated site
+        uses: actions/download-artifact@v8
+        with:
+          name: site
+          path: _site
+
+      # Cloudflare Pages "advanced mode": _worker.js at the root of the
+      # uploaded directory intercepts every request, including static assets.
+      - name: Add auth worker
+        run: |
+          cp cloudflare/_worker.js _site/_worker.js
+          test -f _site/_worker.js || { echo "::error::worker not copied"; exit 1; }
+
+      # Fail with a readable message rather than a confusing wrangler error.
+      - name: Check deploy configuration
+        env:
+          PROJECT: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          missing=""
+          [ -n "$PROJECT" ] || missing="$missing vars.CLOUDFLARE_PROJECT_NAME"
+          [ -n "$TOKEN" ]   || missing="$missing secrets.CLOUDFLARE_API_TOKEN"
+          [ -n "$ACCOUNT" ] || missing="$missing secrets.CLOUDFLARE_ACCOUNT_ID"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository configuration:$missing"
+            echo "See the Cloudflare section of README.md."
+            exit 1
+          fi
+          echo "OK: deploy configuration present"
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >-
+            pages deploy _site
+            --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME }}
+            --branch=main

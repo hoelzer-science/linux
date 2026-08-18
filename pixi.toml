@@ -1,0 +1,49 @@
+[workspace]
+name = "teaching-template"
+description = "Course environment: Python + bioconda CLI tools"
+channels = ["conda-forge", "bioconda"]
+# NOTE: bioconda does not build for Windows. Students on Windows need WSL2.
+# Adding "win-64" here will fail to solve as soon as a bioconda tool is required.
+platforms = ["osx-arm64", "osx-64", "linux-64"]
+
+[dependencies]
+python = "3.12.*"
+biopython = "*"
+pandas = "*"
+matplotlib-base = "*"
+jupyter = "*"
+
+# A real bioconda CLI tool, present to prove the toolchain works end to end.
+mafft = "*"
+
+[feature.dev.dependencies]
+pytest = "*"
+ruff = "*"
+
+[environments]
+default = { features = ["dev"] }
+
+[tasks]
+# Practical tests: run the reference solutions against the expected results.
+# The starter/ tests are stubs that fail by design, so they are excluded here.
+test = "pytest practicals -v --ignore-glob=**/starter/**"
+lint = "ruff check ."
+
+# Render the course website (for self-hosting).
+site = "quarto render"
+
+# Render self-contained single-file HTML for Moodle upload.
+# Must go through publish.sh, NOT `quarto render --profile lms` directly:
+# the LMS build needs a post-processing pass to rewrite .qmd links to .html.
+# Calling quarto directly silently produces output with broken links.
+lms = "./scripts/publish.sh lms"
+
+preview = "quarto preview"
+
+# Which sessions are published, which are held back.
+status = "./scripts/release.sh status"
+
+# Verify both builds. Render first (`pixi run site && pixi run lms`).
+check-links = "./scripts/check-links.sh _site && ./scripts/check-links.sh _lms"
+check-output = "./scripts/check-output.sh _site && ./scripts/check-output.sh _lms"
+check = { depends-on = ["check-links", "check-output"] }

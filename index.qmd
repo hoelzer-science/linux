@@ -1,0 +1,20 @@
+---
+title: "{{< meta course.title >}}"
+---
+
+{{< meta course.semester >}} · {{< meta course.institution >}}
+
+Lecture ({{< meta course.sws-lecture >}} SWS) and practical
+({{< meta course.sws-practical >}} SWS), {{< meta course.audience >}}. Module {{< meta course.code >}}.
+
+## Start here
+
+- [How this course works](guide.qmd) — read this first
+- [Schedule](schedule.qmd) — what happens when
+- [Lecture 01 — Sequence Alignment](lectures/01-alignment/index.qmd)
+- [Practical 01 — Pairwise Alignment](practicals/01-alignment/index.qmd)
+
+::: {.callout-note}
+New here? The [course guide](guide.qmd) explains the login, the slides, how to
+get PDF versions, and how the practicals are set up.
+:::

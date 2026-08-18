@@ -128,6 +128,21 @@ Four parameters, four jobs: `-t,` the delimiter, `-k2` which column, `-n`
 compare as numbers, `-r` largest first. Drop `-n` and `103` sorts *before*
 `12`, because as text it starts with a smaller character.
 
+## Never put a space in a name you create
+
+The shell splits what you type on whitespace — so a space inside a filename
+is indistinguishable from a space between two separate arguments.
+
+```text
+cd lab notebook
+bash: cd: lab: No such file or directory
+```
+
+`cd` saw **two** arguments, not one. Quoting (`cd "lab notebook"`) fixes it,
+but the real fix is upstream: use `lab_notebook` and the problem never comes
+up. Graphical file managers and Windows both allow spaces freely — the
+terminal is where that difference first bites.
+
 ## Pipes: small tools, chained
 
 ```bash

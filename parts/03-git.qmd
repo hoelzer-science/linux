@@ -265,6 +265,20 @@ repositories, so you can back them up, work from more than one machine, and let
 other people see your work. It is not Git — it is one of several hosts, alongside
 GitLab and others.
 
+::: {.callout-important}
+## You will need an account
+
+If your practical works out of a shared repository, at least one person on the
+team needs a GitHub account for that repository to exist at all. In practice
+everyone ends up with one — each of you will push your own commits, and a
+commit's author is tied to the account that made it.
+
+It costs nothing and takes a minute: [github.com/join](https://github.com/join).
+Do this before you need it, not in the middle of a session. See also
+*"Make a GitHub profile, and treat it as one"* below — this is not only a
+practical requirement.
+:::
+
 @fig-git-stages places everything on this page on one picture, and adds the
 piece GitHub is for: a **remote repository**, a copy of the same history sitting
 on a server rather than on your machine.
@@ -422,6 +436,19 @@ reproduce it — is a genuine example of your work, and it will be the first thi
 in a portfolio you did not realise you were building.
 
 That is a much better reason to write decent commit messages than being told to.
+
+**This is worth taking seriously, not just as a habit.** A GitHub profile can
+become a genuine landing page — pinned repositories, a short bio, links to
+papers or projects, even its own page at `username.github.io`. One example
+worth looking at:
+[github.com/jonas-fuchs](https://github.com/jonas-fuchs), a working
+bioinformatician's profile built exactly this way. For a job application in
+this field, a profile like that can say more than a CV — it is evidence you
+can actually do the work, not a claim that you can.
+
+None of this needs to happen this semester. It needs to *start* this semester,
+because a profile with one good repository on it beats one with none, and the
+gap only closes by adding to it.
 :::
 
 # When it goes wrong
@@ -452,6 +479,7 @@ answer to a beginner's problem.
 
 # What you should be able to do now
 
+- [ ] Have a GitHub account.
 - [ ] Explain why `analysis_final_REALLY.py` is not version control.
 - [ ] Configure your name and email.
 - [ ] Make a repository and commit a file to it.

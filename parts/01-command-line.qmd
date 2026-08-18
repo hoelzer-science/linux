@@ -285,6 +285,21 @@ data
 directories as needed, and do not complain if it already exists" — which is why
 it can create `practice` and `practice/data` in one go.
 
+`echo` prints its argument back out. On its own that looks pointless —
+
+```bash
+echo "hello"
+```
+
+```text
+hello
+```
+
+— but the next examples send that output straight into a file instead of the
+screen, which is the fastest way to put text in a file without opening an
+editor. The redirection section below explains exactly how that works; for now,
+just read `echo "text" > file` as "write text into file".
+
 Now some files to play with:
 
 ```bash
@@ -337,6 +352,10 @@ Two habits worth forming immediately:
 
 - **`ls` first, `rm` second.** Run `ls` with the same names you are about to
   delete. If `ls` shows what you expect, `rm` will delete what you expect.
+- **Type the name with Tab, not from memory.** A name the shell completed for
+  you is guaranteed to exist and be spelled correctly. A name typed from memory
+  is a guess — and a typo in an `rm` argument is how the wrong thing gets
+  deleted.
 - **Be very careful with `rm -r`**, which deletes a directory and everything
   inside it, recursively. Combined with a wildcard or a stray space it is the
   classic way to lose a day's work.
@@ -727,6 +746,40 @@ act on — at no risk. This is the same habit as above, and it is the reason it 
 worth repeating.
 :::
 
+# Variables, briefly
+
+You do not need to write scripts to meet this — you will read a variable before
+you ever write one, in someone else's instructions or in an installer's output.
+Enough to recognise it:
+
+```bash
+FOOBAR="hello world"
+echo $FOOBAR
+```
+
+```text
+hello world
+```
+
+Assignment is `NAME=value`, with **no space around the `=`**. `FOOBAR = "hi"`
+is not an assignment — the shell reads `FOOBAR` as a command to run, and it
+almost certainly does not exist. Reading a variable's value back out needs a
+`$` in front of the name: `$FOOBAR`, not `FOOBAR`.
+
+Two you have already been using without a name for them: `$HOME` is your home
+directory (it is what `~` is short for), and `$PATH` is the list of
+directories the shell searches for a command's program file — which is *why*
+"command not found" is a real error and not just an unhelpful one. Both come
+already set; you do not need to define them.
+
+```bash
+echo $HOME
+```
+
+That is the whole scope this page gives it. Writing your own multi-line
+scripts with variables, loops and conditionals is real programming and belongs
+in a programming course, not here.
+
 # Getting unstuck
 
 A short list that will save you more time than anything else on this page.
@@ -740,6 +793,7 @@ A short list that will save you more time than anything else on this page.
 | You want one you ran yesterday | `history`, or <kbd>Ctrl</kbd>+<kbd>R</kbd> and start typing |
 | The screen is a mess | `clear` |
 | You typed a long command and want to fix the start | <kbd>Ctrl</kbd>+<kbd>A</kbd> jumps to the beginning |
+| You are not sure a name is spelled right | Do not guess — press <kbd>Tab</kbd> |
 
 ## Reading an error message
 
@@ -795,7 +849,9 @@ practical assumes.
 - [ ] Chain two commands with a pipe and explain what each half does.
 - [ ] Say why an error message still appears on screen when you redirect output.
 - [ ] Use `*` to act on a set of files, having checked it with `ls` first.
+- [ ] Read `NAME=value` and `$NAME`, and say what `$HOME` and `$PATH` are.
 - [ ] Stop a running command, and get back a command you ran earlier.
+- [ ] Use Tab to complete a name rather than typing it from memory.
 
 Nothing in that list is about memorising commands. You will look those up
 forever, and so does everyone else. It is about knowing what is possible, and

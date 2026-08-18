@@ -95,22 +95,62 @@ to hold back.
 
 ## Every command on the site is executed, and that is the point
 
-`tests/test_examples.py` extracts the `bash` blocks from `parts/*.qmd` and runs
-them in order, in one shell, in a scratch directory with `HOME` pointed at it.
-Blocks share state, exactly as they do for a reader working down the page.
+`tests/test_examples.py` extracts the `bash` blocks from `parts/*.qmd` **and
+`slides.qmd`** and runs them in order, in one shell, in a scratch directory
+with `HOME` pointed at it. Blocks share state, exactly as they do for a reader
+working down the page — see "A page's blocks share one cwd" below, which is
+the sharpest way that bites.
 
 This is the most testable material the teaching project has produced. Prose
 about what a tool does cannot be checked mechanically; a command can. **Where a
 claim can be turned into a runnable example, do that.**
 
-- **Excluding a block** (`{.bash .no-run}`) is for interactive commands (`less`)
-  and things a minimal CI image need not have (`man`). A test asserts these stay
-  rare, because an excluded block is a command shipped to readers unrun.
+- **Excluding a block** (`{.bash .no-run}`) is budgeted **per page**
+  (`NO_RUN_BUDGET` in the test file), not a single flat number. Part 2 installs
+  software, so almost nothing on it can honestly run in CI — a global cap would
+  have forced either a dishonest page or a meaningless limit. Each entry carries
+  a comment saying what on that page genuinely cannot execute; raising a number
+  is a decision to justify in the same commit, not a formality. A page whose
+  every block is excluded (`02-packages`) skips rather than fails.
 - **What is NOT verified: the `text` blocks showing output.** They are
   illustrative. An exact comparison fails on correct-but-machine-specific things
   — home paths, `ls` column widths, locale sort order — and loosening it until
   it passed would leave an assertion that asserts nothing. Say what the test
   tests; do not let the page imply more.
+
+### A page's blocks share one cwd — a `cd` that does not return strands everything after it
+
+Every block on a page runs as one continuous script, so a `cd` in one block is
+still in effect for every later block, exactly as it would be for a reader
+typing down the page. Adding a worked example that does `mkdir foo && cd foo`
+partway through Part 1 — the space-in-filenames example, 2026-08-18 — silently
+moved every later relative path (`data/first.txt`, `result.txt`, `fruit.txt`)
+one directory too deep, because nothing returned to the parent afterwards.
+
+**The isolated test of the new block passing proves the block works alone, not
+that it composes with what follows it.** This was caught only by tracing the
+full `cd`/`mkdir` sequence across the whole page by hand before trusting the
+suite, not by the suite itself — the harness would have caught it too (a later
+block referencing a now-unreachable path fails loudly), but only after the fact.
+When inserting a block that changes directory, trace what comes after it, or
+end the block with the `cd` that undoes it.
+
+### Git needs an identity, and platforms disagree on what happens without one
+
+Apple's git (2.50.1, this repo's usual dev machine) silently falls back to an
+identity derived from the OS account and hostname when `user.name`/`user.email`
+are unset anywhere — with only a warning. Ubuntu's git, in CI, has no such
+fallback and hard-fails with "Author identity unknown." The kickoff deck's git
+example passed locally and failed on its first real CI run for exactly this
+reason (2026-08-18) — reproducing the isolated-`HOME` conditions locally first
+(`env -i HOME=... bash -c '...'`) is what confirmed the platform difference
+before trusting a fix.
+
+**Every page with its own git example needs its own `git config --global
+user.name`/`user.email` step.** Each page's test runs in an independent,
+unconfigured `HOME` by design (see above), so a page cannot rely on another
+page's setup having run first — a real reader working through one page alone
+never touched the other either.
 
 ### Run the tests on macOS as well as Linux
 
@@ -151,6 +191,17 @@ material arrives through `instructor/incoming/` (gitignored here — see above).
     practicals never spell out `ls` or `pwd` in a code block — which does not
     mean readers do not need them. It means navigation is *assumed*, and that
     assumption is precisely the gap Part 1 exists to fill.
+  - **Measurement finds what the data shows; it does not find what everyone
+    assumes.** A second grep pass (2026-08-18) found `git branch` and pull
+    requests genuinely absent from Part 3 despite the practicals' one-repo-per-
+    team design guaranteeing a rejected push. But `echo` (used constantly,
+    never named), a space in a filename (never mentioned at all, in either
+    Part 1 or the practicals' own shell blocks), and Tab-completion needing
+    *repetition* rather than one mention — none of these were found by
+    grepping anything, because nothing greppable was missing. They surfaced
+    only from Martin reading the material directly and noticing what a genuine
+    beginner would trip on. **Both passes are needed; neither substitutes for
+    the other.**
 
 ## Known constraints
 

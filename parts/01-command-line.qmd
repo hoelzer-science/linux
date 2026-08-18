@@ -1,0 +1,649 @@
+---
+title: "Part 1 — The command line"
+subtitle: "Terminal, paths, commands, pipes and wildcards"
+---
+
+This is the part that gates a practical. By the end you should be able to open a
+terminal, say where you are, move around, read a command and its parameters, and
+send the output of one command into another.
+
+Work through it at a terminal, typing as you go. It takes an evening.
+
+::: {.callout-tip}
+## Every command on this page is tested
+
+The `bash` blocks below are extracted and executed on a clean Linux machine each
+time this site is built. If a command is shown here, it ran. Your machine may
+still differ in version or defaults — but the example is not a typo.
+:::
+
+# Opening a terminal
+
+A **terminal** (dt. *Terminal*) is a window that lets you type commands. The
+program that reads what you type and runs it is the **shell** (dt. *Kommando­zeile*
+or *Shell*). Almost everywhere you will meet, the shell is `bash` or the very
+similar `zsh`.
+
+**Linux** — search the applications menu for *Terminal*. On Ubuntu,
+<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd> opens one directly.
+
+**macOS** — *Terminal* lives in `Applications → Utilities`. Spotlight
+(<kbd>⌘</kbd>+<kbd>Space</kbd>, type "terminal") is quicker. macOS is Unix
+underneath, so the concepts and nearly all the commands here work unchanged.
+
+::: {.callout-note}
+## One real macOS difference, worth knowing now
+
+Linux ships the **GNU** versions of the basic tools; macOS ships the older
+**BSD** versions. They agree on the important things and differ at the edges —
+most visibly, BSD tools generally do **not** accept `--help` or long parameter
+names like `--lines`, only the short `-n` form.
+
+Where this page could go either way it uses the portable form, so everything
+here runs on both. But if you copy a command from the internet and macOS says
+`unrecognized option`, this is usually why, and the fix is usually the short
+parameter.
+:::
+
+**Windows** — you need **WSL2** (Windows Subsystem for Linux), which runs a real
+Linux inside Windows. This is not optional or a second-best: much scientific
+software has no Windows build at all, so the Windows answer to "how do I run
+this" is genuinely "run Linux". In PowerShell, as administrator:
+
+```powershell
+wsl --install
+```
+
+Reboot, let it finish setting up, choose a username and password, and from then
+on start *Ubuntu* from the Start menu. Everything below then applies to you
+exactly as written.
+
+::: {.callout-warning}
+## Do this before the practical, not during it
+
+The WSL2 install needs a reboot and a download, and occasionally needs
+virtualisation switched on in the BIOS. That is a fine thing to sort out on a
+quiet evening and a bad thing to discover in the first ten minutes of a session.
+:::
+
+## What you are looking at
+
+You will see something like:
+
+```text
+user@machine:~$
+```
+
+That is the **prompt**. It is the shell saying it is ready. The parts are your
+username, the machine's name, and — after the colon — **where you currently
+are** in the filesystem. The `$` marks the end of it.
+
+On this page, code blocks show the command *without* a prompt, so you can copy
+them cleanly. Where output is shown, it is in a separate block.
+
+# Where am I?
+
+The single biggest source of early confusion is not knowing where you are. The
+shell is always sitting *in* one directory, and most commands act on that
+directory unless told otherwise.
+
+`pwd` — **p**rint **w**orking **d**irectory — answers it:
+
+```bash
+pwd
+```
+
+```text
+/home/user
+```
+
+`ls` — **l**i**s**t — shows what is in the current directory:
+
+```bash
+ls
+```
+
+Nothing printed means the directory is empty, which is a real answer, not an
+error. Silence on success is a Unix habit you will get used to: **most commands
+say nothing when they work** and speak up only when something goes wrong.
+
+`ls` takes parameters that change what it shows:
+
+```bash
+ls -l
+ls -a
+ls -lh
+```
+
+- `-l` — **l**ong format: one file per line, with size, date and permissions.
+- `-a` — **a**ll, including hidden files (those whose names start with a dot).
+- `-lh` — long format with **h**uman-readable sizes (`4.0K` rather than `4096`).
+
+That last one is two parameters combined into one word, which is normal and
+worth noticing now: `-lh` means exactly `-l -h`.
+
+## Directories and paths
+
+A **path** (dt. *Pfad*) is a file or directory's address. There are two kinds,
+and the difference matters more than anything else in this section.
+
+An **absolute path** starts at the root of the filesystem, `/`, and is therefore
+unambiguous from anywhere:
+
+```text
+/home/user/projects/data/samples.csv
+```
+
+A **relative path** starts from wherever you currently are:
+
+```text
+data/samples.csv
+```
+
+The second is shorter and is what you will type most of the time. It is also why
+`pwd` matters: the same relative path means different things depending on where
+you are standing.
+
+Three shorthands appear constantly:
+
+| | |
+|---|---|
+| `.` | the current directory |
+| `..` | the directory one level up |
+| `~` | your home directory |
+
+So `~/projects` is your `projects` folder wherever your home happens to be, and
+`../results` is a `results` folder beside the one you are in.
+
+## Moving around
+
+`cd` — **c**hange **d**irectory:
+
+```bash
+cd /tmp
+pwd
+```
+
+```text
+/tmp
+```
+
+Some useful forms:
+
+```bash
+cd ~
+cd ..
+cd -
+```
+
+- `cd ~` — go home. Plain `cd` on its own does the same.
+- `cd ..` — up one level.
+- `cd -` — back to wherever you just were. Surprisingly handy.
+
+::: {.callout-tip}
+## Press Tab. Always.
+
+Type the first few letters of a name and press <kbd>Tab</kbd>. The shell
+completes it. If nothing happens, press <kbd>Tab</kbd> twice to see the options.
+
+This is not a minor convenience. It removes almost every typo, it confirms that
+what you are about to refer to actually exists, and it is the single habit that
+most separates people who find the terminal comfortable from people who find it
+hostile. Use it from your first day, not once you are fluent.
+:::
+
+# Making, copying and removing
+
+Let us make somewhere to work. These commands build a small directory tree, and
+everything later on this page uses it.
+
+```bash
+mkdir -p practice/data
+cd practice
+ls
+```
+
+```text
+data
+```
+
+`mkdir` **m**a**k**es a **dir**ectory. The `-p` parameter means "make parent
+directories as needed, and do not complain if it already exists" — which is why
+it can create `practice` and `practice/data` in one go.
+
+Now some files to play with:
+
+```bash
+echo "alpha" > data/first.txt
+echo "beta" > data/second.txt
+ls data
+```
+
+```text
+first.txt
+second.txt
+```
+
+Copying, renaming and moving:
+
+```bash
+cp data/first.txt data/copy.txt
+mv data/copy.txt data/renamed.txt
+ls data
+```
+
+```text
+first.txt
+renamed.txt
+second.txt
+```
+
+`cp` copies; `mv` moves. Renaming *is* moving — `mv` from one name to another in
+the same directory is how you rename a file, and there is no separate command.
+
+## Deleting, and why it is different
+
+```bash
+rm data/renamed.txt
+ls data
+```
+
+```text
+first.txt
+second.txt
+```
+
+::: {.callout-important}
+## There is no recycle bin
+
+`rm` does not move a file to a trash folder. It deletes it. There is no undo,
+and no dialogue asking whether you are sure.
+
+Two habits worth forming immediately:
+
+- **`ls` first, `rm` second.** Run `ls` with the same names you are about to
+  delete. If `ls` shows what you expect, `rm` will delete what you expect.
+- **Be very careful with `rm -r`**, which deletes a directory and everything
+  inside it, recursively. Combined with a wildcard or a stray space it is the
+  classic way to lose a day's work.
+:::
+
+# Commands and parameters
+
+Nearly every command follows the same shape:
+
+```text
+command  -parameters  arguments
+```
+
+- the **command** — the program you are running.
+- **parameters**, also called flags or options, which change *how* it behaves.
+- **arguments** — usually what it should act *on*, such as a filename.
+
+Parameters come in two styles, and most tools accept both:
+
+| style | looks like | notes |
+|---|---|---|
+| **short** | `-l`, `-h`, `-n 5` | one letter; several can be combined as `-lh` |
+| **long** | `--long`, `--lines 5` | two dashes, a whole word, easier to read later |
+
+Short parameters work everywhere. Long ones are a GNU convention, so they work
+on Linux but often not on macOS — see the note at the top.
+
+Some parameters take a value of their own, some do not:
+
+```bash
+head -n 1 data/first.txt
+```
+
+```text
+alpha
+```
+
+Here `-n` takes the value `1`, and `data/first.txt` is the argument.
+
+::: {.callout-tip}
+## Prefer long parameters in anything you keep
+
+On Linux, `-n 1` and `--lines 1` do the same thing. Short ones are quicker to
+type; long ones are far easier to read six months later, and in a methods
+section they explain themselves. Type short, save long — and remember that a
+script written with long parameters will not run on a Mac.
+:::
+
+## Long commands and the backslash
+
+Real commands get long — long enough that they are written across several lines.
+A backslash at the very end of a line means **"this command continues on the
+next line"**:
+
+```bash
+head \
+  -n 1 \
+  data/second.txt
+```
+
+```text
+beta
+```
+
+That is exactly the same command as `head -n 1 data/second.txt`. The backslashes
+are only there so a human can read it.
+
+::: {.callout-warning}
+## The backslash must be the last character on the line
+
+Not a space, not a comment — the very last character. A trailing space after the
+backslash breaks the continuation, and the error you get points at the *next*
+line, which is a confusing place to start looking.
+
+This matters more than its size suggests: nearly a quarter of the commands in a
+typical practical are written across multiple lines this way, so a student who
+cannot read a backslash cannot correctly copy most of the session.
+:::
+
+## Finding out what a command does
+
+Three things to try, in this order:
+
+```{.bash .no-run}
+head --help
+```
+
+On Linux, most commands accept `--help` and print a short summary. It is the
+fastest answer and usually enough. On macOS the base tools are BSD and mostly do
+not, so there you go straight to `man`.
+
+```{.bash .no-run}
+man head
+```
+
+`man` — **man**ual — opens the full documentation. It opens in a pager: scroll
+with the arrow keys or <kbd>Space</kbd>, search by typing `/word`, and **quit
+with `q`**. Not knowing that `q` quits is a genuinely common way to get stuck.
+
+For a great many tools, running them with no arguments at all prints usage —
+though a few will instead sit and wait for input, in which case
+<kbd>Ctrl</kbd>+<kbd>C</kbd> gets you out.
+
+# Looking at files
+
+You rarely want to print a whole file. These four cover almost everything:
+
+```bash
+cat data/first.txt
+```
+
+```text
+alpha
+```
+
+`cat` prints the entire file. Fine for something short, a mistake for anything
+large — printing a million lines to the screen takes a while and tells you
+nothing.
+
+```bash
+head -n 2 data/first.txt
+tail -n 1 data/second.txt
+```
+
+```text
+alpha
+beta
+```
+
+`head` shows the first lines, `tail` the last. Both default to 10.
+
+```bash
+wc -l data/first.txt
+```
+
+```text
+1 data/first.txt
+```
+
+`wc` **c**ounts **w**ords, and `-l` makes it count **l**ines instead — the
+common use by a wide margin.
+
+For reading a large file interactively there is `less`, which opens it in the
+same pager `man` uses:
+
+```{.bash .no-run}
+less data/first.txt
+```
+
+Same navigation: arrows and <kbd>Space</kbd> to move, `/word` to search, `q` to
+quit.
+
+# Redirection and pipes
+
+This is the part that makes a command line worth learning, and the part that has
+no equivalent in a graphical program.
+
+## Sending output to a file
+
+By default a command prints its result to the screen. `>` sends it to a file
+instead:
+
+```bash
+head -n 1 data/first.txt > result.txt
+cat result.txt
+```
+
+```text
+alpha
+```
+
+::: {.callout-warning}
+`>` **overwrites** the target file without warning. `>>` appends to it instead.
+If you have ever wondered how someone empties a file by accident, this is how.
+:::
+
+```bash
+echo "second line" >> result.txt
+cat result.txt
+```
+
+```text
+alpha
+second line
+```
+
+## Sending output to another command
+
+`|` — the **pipe** (dt. *Pipe* or *Rohr*) — takes what one command printed and
+hands it to the next as input, without ever writing a file.
+
+Let us make something worth filtering:
+
+```bash
+printf "banana\napple\ncherry\napple\n" > fruit.txt
+cat fruit.txt
+```
+
+```text
+banana
+apple
+cherry
+apple
+```
+
+Now chain some commands together:
+
+```bash
+sort fruit.txt | uniq -c | sort -rn
+```
+
+```text
+      2 apple
+      1 cherry
+      1 banana
+```
+
+Read it left to right: sort the lines, count how often each one repeats
+(`uniq -c` needs its input sorted, which is why `sort` comes first), then sort
+that result numerically (`-n`) in reverse (`-r`).
+
+`grep` searches for lines matching a pattern, and is probably the single most
+useful command here:
+
+```bash
+grep "an" fruit.txt
+```
+
+```text
+banana
+```
+
+Combining the two ideas — filter, then save:
+
+```bash
+grep "ap" fruit.txt | sort > apples.txt
+cat apples.txt
+```
+
+```text
+apple
+apple
+```
+
+::: {.callout-tip}
+## This is the whole idea
+
+Each of these commands does one small thing. None of them knows about the
+others. The pipe is what turns a handful of simple tools into an answer to a
+question nobody wrote a program for.
+
+When you meet a long command in a practical, read it as a sentence with `|` as
+the punctuation. It almost always says: *take this, keep the interesting part,
+count it, sort it.*
+:::
+
+# Wildcards
+
+A **wildcard** (dt. *Platzhalter*) lets one name refer to many files. The shell
+expands it *before* the command runs, so the command itself never sees the `*`.
+
+```bash
+ls data/*.txt
+```
+
+```text
+data/first.txt
+data/second.txt
+```
+
+| | |
+|---|---|
+| `*` | any number of characters, including none |
+| `?` | exactly one character |
+| `[abc]` | any one of the listed characters |
+
+```bash
+ls data/?econd.txt
+```
+
+```text
+data/second.txt
+```
+
+The commonest real use by far is applying one command to a whole set of files:
+
+```bash
+wc -l data/*.txt
+```
+
+```text
+1 data/first.txt
+1 data/second.txt
+2 total
+```
+
+::: {.callout-tip}
+## Check a wildcard with `ls` before using it with anything destructive
+
+`ls` and `rm` expand `*` identically, so `ls` tells you exactly what `rm` would
+act on — at no risk. This is the same habit as above, and it is the reason it is
+worth repeating.
+:::
+
+# Getting unstuck
+
+A short list that will save you more time than anything else on this page.
+
+| situation | what to do |
+|---|---|
+| A command is running and you want it to stop | <kbd>Ctrl</kbd>+<kbd>C</kbd> |
+| You are stuck in a pager (`man`, `less`) | `q` |
+| The prompt has vanished and nothing responds | <kbd>Ctrl</kbd>+<kbd>C</kbd>, then <kbd>Ctrl</kbd>+<kbd>D</kbd> |
+| You want the command you ran a minute ago | <kbd>↑</kbd> arrow, repeatedly |
+| You want one you ran yesterday | `history`, or <kbd>Ctrl</kbd>+<kbd>R</kbd> and start typing |
+| The screen is a mess | `clear` |
+| You typed a long command and want to fix the start | <kbd>Ctrl</kbd>+<kbd>A</kbd> jumps to the beginning |
+
+## Reading an error message
+
+Error messages look unfriendly and are usually saying something simple. The
+three you will meet first:
+
+```text
+bash: sortt: command not found
+```
+
+The shell does not know that program. Usually a typo; sometimes a tool that is
+not installed yet, which is what Part 2 is about.
+
+```text
+ls: cannot access 'dta': No such file or directory
+```
+
+The path is wrong. Check `pwd`, then `ls` to see what is actually there. Almost
+always this means you are not where you think you are.
+
+```text
+bash: result.txt: Permission denied
+```
+
+You are not allowed to do that here. Common when you have wandered somewhere
+outside your home directory.
+
+::: {.callout-tip}
+## Read the last line first
+
+When something fails and prints twenty lines, the useful one is usually the
+last, or the first — rarely the middle. And a command that prints a warning has
+not necessarily failed: warnings and errors are different, and plenty of tools
+warn every single time they run.
+:::
+
+# What you should be able to do now
+
+Check yourself against this list. If you can do all of it, you have what a first
+practical assumes.
+
+- [ ] Open a terminal, and on Windows have WSL2 working.
+- [ ] Say where you are (`pwd`) and what is there (`ls`).
+- [ ] Move around with `cd`, including `..` and `~`.
+- [ ] Tell an absolute path from a relative one, and explain why it matters.
+- [ ] Make a directory, copy, rename and delete a file — carefully.
+- [ ] Read a command and name its parameters and arguments.
+- [ ] Read a command written across several lines with backslashes.
+- [ ] Find out what a command does, with `--help` or `man`, and quit the pager.
+- [ ] Send output to a file with `>`, and know what `>>` does differently.
+- [ ] Chain two commands with a pipe and explain what each half does.
+- [ ] Use `*` to act on a set of files, having checked it with `ls` first.
+- [ ] Stop a running command, and get back a command you ran earlier.
+
+Nothing in that list is about memorising commands. You will look those up
+forever, and so does everyone else. It is about knowing what is possible, and
+what to search for.
+
+# Where to go next
+
+**Part 2 — package management** is how you install the tools a practical asks
+for, and how you keep one project's tools from breaking another's.
+
+**Part 3 — Git** is how you keep your work, share it, and get it back after you
+break something.
+
+Both are being written.

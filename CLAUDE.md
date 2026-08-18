@@ -1,150 +1,166 @@
-# CLAUDE.md — teaching-template
-
-> ## ⚠ STOP if this is a module repository
->
-> This file describes the **public template**. If you are reading it in a repo
-> created from the template — anything named `course-*` — it is the wrong file
-> and its publishing constraint is **inverted**: it says the repository is
-> public and must contain no real institution, module code or term, which in a
-> private module is exactly backwards and would tell you to delete that
-> module's course configuration.
->
-> Fix it before doing anything else:
->
-> ```bash
-> git rm CLAUDE.md && git mv CLAUDE-module.md CLAUDE.md
-> # then replace the <module> / <MODULE> placeholders
-> ```
->
-> If the repo you are in is `teaching-template` itself, carry on.
+# CLAUDE.md — linux
 
 Permanent onboarding for this repository. Changes only when project knowledge
 changes. Current working state lives in `NEXT.md`; session history in
-`docs/sessions/`.
+`docs/sessions/`. Both are gitignored.
 
-> **`README.md` is the real documentation.** It covers the layout, the design
-> decisions, the full Cloudflare walkthrough, the cherry-pick sync workflow and
-> eight hard-won gotchas. This file deliberately does **not** repeat it — read
-> README first and treat it as authoritative. What follows is only the framing
-> and the working rules a fresh session needs on top of it.
+> Created from **teaching-template** with "Use this template", so it has an
+> *unrelated* git history starting from a single initial commit. Sync is by
+> **cherry-pick only** — never merge or rebase, there is no common ancestor.
 
-## Project overview
+## What this is
 
-A reusable course skeleton: Quarto + pixi + Git, with one vertical slice
-(lecture 01, practical 01) built end to end. Module repositories are created
-from it with "Use this template" and then diverge.
+A public, module-agnostic crash course in the command line, package management
+and Git. Deployed to **linux.hoelzer.science**. Written notes are the primary
+artifact; a short kickoff deck is secondary and does not exist yet.
 
-Kept **public on purpose** — it is the open-educational-resource anchor that
-teaching-hub points at. Making it private was proposed on 2026-07-21 and
-rejected for that reason.
+Three parts, and only the first one gates anything:
 
-## Goals
+| | | |
+|---|---|---|
+| **Part 1** | terminal, filesystem and paths, commands and parameters, wildcards, pipes and redirection | **gates a first practical** |
+| Part 2 | package management — pixi primary, conda/mamba as context | not written |
+| Part 3 | a Git/GitHub detour | not written |
 
-- Let a new module start from working infrastructure instead of a blank repo.
-- Be genuinely reusable by other educators, not just by Martin.
-- Keep the per-semester rollover to a one-file edit (`_course.yml`).
+**Only Part 1 gates the practicals**, so the minimum viable dependency is much
+smaller than the whole course. Do not let Parts 2 and 3 hold up Part 1.
 
-## High-level architecture
+## This repository is PUBLIC — and that is load-bearing
 
-```
-teaching-hub          public    public front door             teaching.hoelzer.science
-teaching-template     public    this repo — course skeleton   teaching-template.hoelzer.science (401)
-course-<module>       private   actual courses                course-<module>.hoelzer.science (401)
-<shared-prerequisite> public    material every module needs   (planned, e.g. linux.hoelzer.science)
-```
+Everything here is world-readable: files, commit messages, history. Force-push
+does not remove old commits from GitHub; they stay fetchable by full SHA.
 
-**Naming rule.** The `course-` prefix marks a password-protected enrolled
-module; public sites take bare labels. Repo name, Pages project name and
-subdomain label are always identical. See README, "Naming", for why — in short,
-first-level labels are a scarce permanent namespace, and nesting under
-`teaching.` would need paid Advanced Certificate Manager.
+- **Nothing may name an institution, a module code, a term or a scheduled
+  course.** Not in a committed file, not in a commit message, not in the
+  repository description. This is the same constraint the hub carries.
+- **`instructor/incoming/` is gitignored**, and this is the single most
+  important difference from the course repository. There, drops are committed
+  and kept as the record of what was handed over — safe, because that repo is
+  private. Committing a dropped `.pptx` here would publish the deck, its
+  figures and whatever licence they carry.
+- **Figure provenance is not best-effort here.** The course repo relaxes it
+  because the site is behind basic auth and the repo is private; neither is
+  true here. A figure whose licence cannot be established does not go in.
 
-The fourth kind exists because cherry-pick sync moves **infrastructure only** — content
-copied into each module drifts. Material every module needs and none owns (first case: a
-Linux/bash crash course) gets its own public repo instead, and modules **link** to it from
-`guide.qmd` rather than carrying a copy. Do not add such material to this template.
+## It serves three modules, so write it module-agnostic
 
-Sites are Quarto → Cloudflare Pages (Direct Upload from CI), fronted by
-`cloudflare/_worker.js` doing HTTP basic auth that **fails closed**. There is no
-GitHub–Cloudflare integration, so the repo can be private without a paid plan.
+Martin widened the remit on 2026-08-18: this is no longer just a prerequisite
+for one module's practicals. It should also serve **Angewandte Bioinformatik**
+(a Master module) and a planned **Digital Health** module for medical-technology
+students.
 
-See README for the stack table, the layout map and why each choice was made.
+So: no assumption that the reader is a biotechnologist, no dependence on any one
+course's case study, and examples that are **illustrative rather than
+load-bearing** — ordinary files and folders, not domain data.
 
-## Coding conventions and style
-
-- Hard-wrap prose at roughly 80 columns.
-- Student-facing prose is **operational**: what to do, not why. The reasoning
-  lives on the public hub (`teaching.hoelzer.science/philosophy`), which
-  `guide.qmd` links to once.
-- Anything that varies by course goes through `_course.yml` and
-  `{{< meta course.* >}}` — never hardcode a course name, term, institution or
-  LMS in prose.
-- Python: `ruff` clean (`pixi run lint`).
+"Linked, never copied" now has three consumers to keep from drifting, which is
+what makes the separate public repo do real work rather than just being tidy.
+Each module links it from its own guide; the hub links it from `resources.qmd`.
+Neither before the relevant part exists.
 
 ## Common commands
 
 ```bash
-pixi install       # environment, incl. bioconda CLI tools
+pixi install
 pixi run preview   # live-reloading site
-pixi run test      # practical solutions against their tests
-pixi run check     # links + output guards; what CI runs
-pixi run status    # which sessions are published, which are held back
+pixi run test      # execute every shell example on the site
+pixi run site      # render into _site/
+pixi run check     # links + output guards
 ```
 
-## Development workflow
+Before pushing, run what CI runs, in CI's order:
 
-1. Edit, `pixi run preview`, `pixi run check`.
-2. **Keep infrastructure commits separate from content commits.** This is not
-   style — it is what makes cherry-pick sync work. See README, "The discipline
-   that makes this painless".
-3. Push to `main`: CI validates, then deploys. Releasing a *session* is a
-   separate gate — add it to the render allowlist in `_quarto.yml`.
+```bash
+pixi run lint && pixi run test && pixi run site && pixi run check
+```
+
+**Pushing to main IS publishing.** There is no release gate and no auth worker —
+both were removed from the template's infrastructure, deliberately. A course
+holds sessions back until the week they are taught; a reference site has nothing
+to hold back.
+
+## Every command on the site is executed, and that is the point
+
+`tests/test_examples.py` extracts the `bash` blocks from `parts/*.qmd` and runs
+them in order, in one shell, in a scratch directory with `HOME` pointed at it.
+Blocks share state, exactly as they do for a reader working down the page.
+
+This is the most testable material the teaching project has produced. Prose
+about what a tool does cannot be checked mechanically; a command can. **Where a
+claim can be turned into a runnable example, do that.**
+
+- **Excluding a block** (`{.bash .no-run}`) is for interactive commands (`less`)
+  and things a minimal CI image need not have (`man`). A test asserts these stay
+  rare, because an excluded block is a command shipped to readers unrun.
+- **What is NOT verified: the `text` blocks showing output.** They are
+  illustrative. An exact comparison fails on correct-but-machine-specific things
+  — home paths, `ls` column widths, locale sort order — and loosening it until
+  it passed would leave an assertion that asserts nothing. Say what the test
+  tests; do not let the page imply more.
+
+### Run the tests on macOS as well as Linux
+
+**CI runs Ubuntu, and that is not sufficient.** Linux ships GNU coreutils and
+macOS ships BSD; the BSD versions reject `--help` and long parameter names like
+`--lines`. The very first run of this harness — on a Mac — caught `head --help`
+and `head --lines 1`, both of which CI would have passed in silence, and both of
+which would have been shipped to every Mac reader.
+
+The material now uses the portable short forms and teaches the GNU/BSD split as
+a thing readers will actually hit. **A green CI run is evidence about Linux
+only.**
+
+## Authoring
+
+The same division of labour as the course repo: **Martin decides what is taught
+and vouches for every claim; the session drafts, structures and builds.** His
+material arrives through `instructor/incoming/` (gitignored here — see above).
+
+- **Assume no command line experience.** No prior Linux, no terminal, no
+  programming.
+- **Written material is English.** The consuming modules are taught in German,
+  so structural terms get a German gloss in parentheses on first use — terminal
+  (dt. *Terminal*), wildcard (dt. *Platzhalter*). Sparingly: this is a reference,
+  not an exam subject.
+- **Reference format, not lecture format.** These pages are meant to be
+  scrolled, searched and copied from at a terminal. Long pages with a deep table
+  of contents beat many short ones.
+- **The source deck is not to be ported 1:1.** An existing Google Slides deck
+  covers some of this. Slides are a poor reference format for commands people
+  need to copy later.
+- **Order sections by what the consumers actually need**, measured rather than
+  assumed. Grepping the practicals' shell blocks is what set Part 1's emphasis:
+  short parameters and backslash line-continuations dominate, wildcards barely
+  appear, and `$(...)`, `>>`, `~/`, `../` and glob ranges never do. Re-measure
+  when a consuming module's practicals change.
+  - **A null result there is evidence about the query, not only the data.** The
+    practicals never spell out `ls` or `pwd` in a code block — which does not
+    mean readers do not need them. It means navigation is *assumed*, and that
+    assumption is precisely the gap Part 1 exists to fill.
 
 ## Known constraints
 
-- **Publishing constraint (important).** This repository is public. No real
-  institution name, module code, term, or scheduled course may appear in it —
-  including in commit messages. `_course.yml` ships **placeholders**; the real
-  values live only in the private module repos that override them. This leaked
-  once (2026-07-21) and had to be fixed. If a change would add any of these,
-  stop and ask.
-- **Module sync is cherry-pick only.** "Use this template" gives modules an
-  unrelated history, so merge and rebase are impossible. Backports go both ways;
-  module → template is the common direction.
-- **Never cherry-pick the `_course.yml` placeholder commit** (`87ea33f`) into a
-  module — it would clobber that course's real configuration.
-- **bioconda has no Windows builds.** `pixi.toml` lists macOS and Linux only;
-  students on Windows need WSL2. Plan the first practical around it.
-- `styles/website.scss` is duplicated by hand with the hub — keep the palette
-  variables in sync. A shared Quarto extension is deliberately deferred until
-  several modules exist.
-- README's "Gotchas discovered while building this" is not optional reading —
-  most of those failures are silent (published `.qmd` source, broken LMS links,
-  file-collision errors with misleading messages).
-
-## Important architectural decisions
-
-These are summarised only so a session knows they exist; README has the reasoning.
-
-- Slides and notes are separate files sharing partials — neither generates well
-  from the other.
-- `main` deploys continuously, but sessions are released deliberately via an
-  **allowlist**, so CD never publishes unfinished material early.
-- Solutions are excluded at **build time**, not access-controlled — so the
-  repository itself must stay private, and exams belong elsewhere.
-- Tags, not branches, for semesters.
-- Access control is a password on the webserver, not repository visibility.
-- No PDFs are generated; students export slides themselves.
-- Dual licence: MIT for code, CC BY-SA 4.0 for teaching content.
+- **bioconda has no Windows builds**, and much scientific software has no
+  Windows build at all. The Windows answer is **WSL2**, and the material says so
+  without hedging. `pixi.toml` deliberately omits `win-64` so the environment
+  does not contradict the advice.
+- **`_quarto.yml` renders only an explicit list of `.qmd`.** A Quarto *website*
+  project otherwise turns every loose `.md` into a public page — this bit the hub
+  repo, where `NEXT.md` became `_site/NEXT.html`. Do not widen it to `.md`.
+- **`404.html` must exist at the top level**, or Cloudflare Pages treats the
+  deployment as a single-page app and serves `/` with status 200 for every
+  unmatched path.
+- **Custom domains cannot be scripted** — wrangler has no `pages domain`
+  subcommand. Dashboard only. Never hand-create the DNS record.
+- `styles/website.scss` is duplicated by hand across the teaching repos. A
+  shared Quarto extension stays deferred until several modules exist.
 
 ## Things future sessions should always know
 
 - Read `README.md`, then `NEXT.md`, then the newest file in `docs/sessions/`.
-- This repo is **public**; the hub is public; module repos are private. Assume
-  anything here is world-readable, including history.
-- Verify any new course-site deployment by hand on a **direct asset URL**
-  (e.g. `/lectures/01-alignment/slides.html`), not just the landing page. If the
-  landing page prompts but the asset loads, the worker is not intercepting
-  assets and the site is effectively public.
-- `gh` is installed and authenticated as `hoelzer`; `wrangler` is authenticated
-  via OAuth. Cloudflare account ID `6398bee0e2141168cd3fccf8cfbfe6ee`.
+- The related repos: `~/git/teaching-hub` (public front door),
+  `~/git/teaching-template` (the skeleton this came from),
+  `~/git/course-bioinformatics` (private, the first consumer). Each has its own
+  `CLAUDE.md`, and the course repo's is the fullest.
+- `gh` is authenticated as `hoelzer`; `wrangler` via OAuth. Cloudflare account
+  ID `6398bee0e2141168cd3fccf8cfbfe6ee`.

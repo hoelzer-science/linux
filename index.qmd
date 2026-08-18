@@ -1,20 +1,65 @@
 ---
-title: "{{< meta course.title >}}"
+title: "Linux Crash Course"
 ---
 
-{{< meta course.semester >}} · {{< meta course.institution >}}
+The command line, package management and Git — the working baseline for
+computational practicals.
 
-Lecture ({{< meta course.sws-lecture >}} SWS) and practical
-({{< meta course.sws-practical >}} SWS), {{< meta course.audience >}}. Module {{< meta course.code >}}.
+This is a **reference**, not a lecture. It is written to be scrolled, searched
+and copied from while you are actually sitting at a terminal, and to be worked
+through before a practical rather than during one.
 
 ## Start here
 
-- [How this course works](guide.qmd) — read this first
-- [Schedule](schedule.qmd) — what happens when
-- [Lecture 01 — Sequence Alignment](lectures/01-alignment/index.qmd)
-- [Practical 01 — Pairwise Alignment](practicals/01-alignment/index.qmd)
+- [Part 1 — The command line](parts/01-command-line.qmd)
+
+Parts 2 (package management) and 3 (Git) are being written.
 
 ::: {.callout-note}
-New here? The [course guide](guide.qmd) explains the login, the slides, how to
-get PDF versions, and how the practicals are set up.
+## You do not need to finish everything
+
+**Part 1 is the part that gates a practical.** If you can open a terminal, say
+where you are in the filesystem, read a command with its parameters, and send
+output from one command into another, you have enough to start. Parts 2 and 3
+matter once you are installing your own tools and keeping your own work.
 :::
+
+## Who this is for
+
+Anyone about to do computational work who has not used a command line before.
+It assumes **no prior experience** — not with Linux, not with a terminal, not
+with programming.
+
+It deliberately belongs to no single course. Several modules link to it, so the
+examples here are ordinary files and folders rather than data from any one
+subject. You will meet the real data in the practical; this is about the tools
+you will meet it with.
+
+## Why a terminal at all
+
+A fair question, and worth answering before you spend an evening on it.
+
+- **The tools only exist there.** Most scientific software has no graphical
+  interface. This is not an oversight — a program that runs from the command
+  line can be run a thousand times by another program, and one that needs a
+  human to click cannot.
+- **It is a record.** A command you typed can be pasted into a methods section,
+  re-run next year, and checked by someone else. A sequence of clicks cannot be.
+- **It scales without changing.** The command that processes one file processes
+  four hundred with the same typing.
+
+The cost is that nothing is discoverable. A graphical program shows you what it
+can do; a terminal shows you a blinking cursor and waits. That is the gap this
+material closes.
+
+## How to use it
+
+Type the commands. Do not copy-paste them, at least not at first — the typing
+is doing more work than it looks like, because the errors you make while typing
+are the ones you will make later under time pressure, and meeting them now with
+nothing at stake is the cheapest possible time to meet them.
+
+Every command shown here is **executed automatically** whenever this site is
+built, in a clean scratch directory, on Linux. If an example is on this page, it
+ran. That does not mean it will do the same thing on your machine — versions and
+defaults differ — but it does mean it is not a typo.

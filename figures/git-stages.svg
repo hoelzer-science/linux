@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 970 300" width="970" height="300"
+     font-family="system-ui, -apple-system, sans-serif" role="img"
+     aria-label="Four stages a change passes through in Git. Workspace, where you edit files, connects via git add to the Staging Area, which connects via git commit to the Local Repository, which connects via git push to the Remote Repository. A separate dashed arrow labelled git pull or git clone runs from the Remote Repository back to the Workspace.">
+  <!--
+    Own figure, not a redraw of any specific source. The stage model itself
+    (workspace / staging area / local repo / remote repo) is standard Git
+    documentation vocabulary, not anyone's expression. A dropped reference
+    image of the same shape (gitflow.jpg, javacodegeeks.com) carries no
+    visible licence, and this repository is public, so it was not used even
+    as a layout guide beyond "four boxes in a row".
+
+    Editors: a double hyphen is illegal inside an XML comment. It makes the
+    file invalid SVG, which browsers may tolerate and ImageMagick will not.
+
+    Geometry note: an earlier version used a 50px gap between boxes, and the
+    "git commit" / "git push" labels overflowed into the neighbouring box's
+    title text: readable as a collision, not just tight spacing. Gaps here
+    are 100px specifically because that is what a 13px monospace label needs
+    to clear an 18px bold box title on both sides. If either font size or
+    label text changes, recheck by rendering, not by eye on the source.
+  -->
+  <style>
+    .box    { stroke: #1a1a1a; stroke-width: 2; }
+    .ws     { fill: #e8e8e8; }
+    .stage  { fill: #ffe08a; }
+    .local  { fill: #a8e6a1; }
+    .remote { fill: #9fd3f7; }
+    .lbl    { font-size: 18px; font-weight: 700; fill: #1a1a1a; text-anchor: middle; }
+    .sub    { font-size: 12.5px; fill: #444; text-anchor: middle; }
+    .cmd    { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+              font-size: 13px; fill: #1a1a1a; text-anchor: middle; }
+    .fwd    { stroke: #1a1a1a; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    .back   { stroke: #555; stroke-width: 2; fill: none; stroke-dasharray: 6 4;
+              marker-end: url(#arrow-grey); }
+  </style>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#1a1a1a"/>
+    </marker>
+    <marker id="arrow-grey" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#555"/>
+    </marker>
+  </defs>
+
+  <!--
+    Four boxes, width 155, gap 100, starting at x=20:
+      ws:     20-175    (centre  97.5)
+      stage: 275-430    (centre 352.5)
+      local: 530-685    (centre 607.5)
+      remote:785-940    (centre 862.5)
+  -->
+  <rect class="box ws"     x="20"  y="60" width="155" height="92" rx="10"/>
+  <rect class="box stage"  x="275" y="60" width="155" height="92" rx="10"/>
+  <rect class="box local"  x="530" y="60" width="155" height="92" rx="10"/>
+  <rect class="box remote" x="785" y="60" width="155" height="92" rx="10"/>
+
+  <text class="lbl" x="97.5" y="98">Workspace</text>
+  <text class="sub" x="97.5" y="118">files on disk,</text>
+  <text class="sub" x="97.5" y="134">as you edit them</text>
+
+  <text class="lbl" x="352.5" y="98">Staging area</text>
+  <text class="sub" x="352.5" y="118">a.k.a. the "index" —</text>
+  <text class="sub" x="352.5" y="134">next commit's contents</text>
+
+  <text class="lbl" x="607.5" y="98">Local repository</text>
+  <text class="sub" x="607.5" y="118">the .git history</text>
+  <text class="sub" x="607.5" y="134">on this machine</text>
+
+  <text class="lbl" x="862.5" y="98">Remote repository</text>
+  <text class="sub" x="862.5" y="118">e.g. on GitHub —</text>
+  <text class="sub" x="862.5" y="134">shared with others</text>
+
+  <!-- forward arrows span the full gap; each label sits above its line -->
+  <path class="fwd" d="M175 100 H275"/>
+  <text class="cmd" x="225" y="90">git add</text>
+
+  <path class="fwd" d="M430 100 H530"/>
+  <text class="cmd" x="480" y="90">git commit</text>
+
+  <path class="fwd" d="M685 100 H785"/>
+  <text class="cmd" x="735" y="90">git push</text>
+
+  <!-- return arrow, drawn below the row -->
+  <path class="back" d="M862.5 156 V225 H97.5 V156"/>
+  <text class="cmd" x="480" y="250" fill="#444">git pull  /  git clone</text>
+</svg>

@@ -265,6 +265,23 @@ repositories, so you can back them up, work from more than one machine, and let
 other people see your work. It is not Git — it is one of several hosts, alongside
 GitLab and others.
 
+@fig-git-stages places everything on this page on one picture, and adds the
+piece GitHub is for: a **remote repository**, a copy of the same history sitting
+on a server rather than on your machine.
+
+![The four stages a change passes through, and the command that moves it from
+one to the next.](../figures/git-stages.svg){#fig-git-stages
+fig-alt="Four boxes in a row: Workspace, Staging area, Local repository and
+Remote repository. Workspace connects to Staging area via git add, Staging area
+to Local repository via git commit, and Local repository to Remote repository
+via git push. A dashed arrow labelled git pull or git clone runs from Remote
+repository back to Workspace."}
+
+`git push` and `git pull` are the two new commands — send your local history to
+the remote, or fetch what changed there. `git clone` is `git pull`'s
+first-time counterpart: instead of updating an existing local repository, it
+creates one from scratch by copying a remote's entire history.
+
 ::: {.callout-note}
 ## The commands below are not executed
 

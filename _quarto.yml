@@ -45,14 +45,17 @@ website:
     computational practicals. Open teaching material.
   site-url: "https://linux.hoelzer.science"
   navbar:
-    # Parts 2 (package management) and 3 (Git) are not written yet and are
-    # deliberately absent rather than present as stubs -- a public page saying
-    # "not written" is worse than no page. Add them here when they exist.
     left:
       - href: index.qmd
         text: Home
       - href: parts/01-command-line.qmd
         text: "1 — Command line"
+      - href: parts/02-packages.qmd
+        text: "2 — Tools"
+      - href: parts/03-git.qmd
+        text: "3 — Git"
+      - href: parts/04-file-formats.qmd
+        text: "4 — File formats"
   page-footer:
     center: >-
       Content licensed

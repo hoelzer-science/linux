@@ -1,0 +1,364 @@
+---
+title: "Part 4 — Files you will meet"
+subtitle: "Markdown, JSON, tables, and why text files misbehave"
+---
+
+Most of what you handle is **plain text** — files a human can read and any
+program can parse. This part covers the ones that turn up everywhere, whatever
+subject you are working in.
+
+::: {.callout-note}
+## This page grows
+
+These are the formats that come up first. Others get added as they earn a place;
+nothing here has to be complete to be useful.
+:::
+
+# Plain text, and what "plain" means
+
+A plain text file contains characters and nothing else — no fonts, no colours,
+no hidden formatting. That is exactly why it lasts: a text file written thirty
+years ago still opens today, and every programming language can read one without
+a library.
+
+A `.docx` or `.xlsx` is **not** plain text. It is a zip archive full of markup,
+which is why a program that expects text chokes on one.
+
+```bash
+printf "just some text\n" > plain.txt
+cat plain.txt
+```
+
+```text
+just some text
+```
+
+The extension is a hint to *you*, not a fact about the file. `data.csv`,
+`data.txt` and `data` can hold identical bytes. Renaming a file does not convert
+it.
+
+# Markdown
+
+**Markdown** (`.md`) is text with light formatting marks that stay readable as
+text. It is what READMEs, documentation and notes are written in, and it is what
+GitHub renders on a repository's front page.
+
+```bash
+cat > README.md <<'EOF'
+# My project
+
+A short description of what this does.
+
+## Requirements
+
+- Something you need
+- Something else
+
+Run it with `pixi run analysis`, and see [the notes](notes.md) for detail.
+
+**Important:** the data is not in this repository.
+EOF
+head -n 3 README.md
+```
+
+```text
+# My project
+
+A short description of what this does.
+```
+
+The whole syntax you need at first:
+
+| you write | you get |
+|---|---|
+| `# Title`, `## Section` | headings, one `#` per level |
+| `*text*` or `_text_` | *italic* |
+| `**text**` | **bold** |
+| `` `code` `` | `inline code` |
+| `- item` | a bullet list |
+| `1. item` | a numbered list |
+| `[label](target)` | a link |
+| `> quoted` | a quotation |
+
+Code spanning several lines goes in a fenced block, with the language named so
+it is highlighted:
+
+````text
+```python
+print("hello")
+```
+````
+
+::: {.callout-tip}
+## Every repository should have a README.md
+
+It is the first thing anyone sees, including you in a year. Four things earn
+their space: what this is, what you need to run it, how to run it, and where the
+data lives. That is enough — a short README that exists beats a thorough one
+that does not.
+:::
+
+::: {.callout-note}
+## Markdown is not one standard
+
+Different tools support slightly different extensions — tables, footnotes,
+task lists and strikethrough are common but not universal. GitHub's variant is
+the one you will meet most. If something renders on GitHub and not elsewhere,
+this is usually why, and it is not your mistake.
+:::
+
+# JSON
+
+**JSON** (`.json`) is how programs hand structured data to each other. Many
+tools write a JSON report alongside their human-readable output, and it is
+usually the easiest thing to pull numbers out of.
+
+```bash
+cat > report.json <<'EOF'
+{
+  "sample": "A1",
+  "passed": true,
+  "count": 1420,
+  "score": 0.97,
+  "flags": ["short", "duplicated"],
+  "source": {
+    "instrument": "bench-2",
+    "operator": null
+  }
+}
+EOF
+cat report.json
+```
+
+Six types, and that is the whole language:
+
+| | |
+|---|---|
+| **string** | `"A1"` — always double quotes, never single |
+| **number** | `1420`, `0.97` — no quotes |
+| **boolean** | `true` / `false` — lowercase |
+| **null** | `null` — a value that is deliberately absent |
+| **array** | `[...]` — an ordered list |
+| **object** | `{...}` — named fields, like the whole file |
+
+Objects nest, which is how JSON represents structure: `source` above is an
+object inside an object.
+
+## Reading it
+
+Python reads JSON without installing anything:
+
+```bash
+python3 -c "
+import json
+d = json.load(open('report.json'))
+print(d['sample'], d['count'])
+print(d['source']['instrument'])
+print(len(d['flags']), 'flags')
+"
+```
+
+```text
+A1 1420
+bench-2
+2 flags
+```
+
+Note how nesting is read: `d['source']['instrument']` walks down one level at a
+time, exactly as the file is shaped.
+
+## Checking whether a file is valid
+
+A JSON file is either well-formed or it is not, and one missing comma breaks the
+whole thing. Rather than squinting at it:
+
+```bash
+python3 -m json.tool report.json > /dev/null && echo "valid JSON"
+```
+
+```text
+valid JSON
+```
+
+That also pretty-prints, so it is the quickest way to make an unreadable
+one-line file legible:
+
+```bash
+printf '{"a":1,"b":[2,3]}' > tight.json
+python3 -m json.tool tight.json
+```
+
+```text
+{
+    "a": 1,
+    "b": [
+        2,
+        3
+    ]
+}
+```
+
+::: {.callout-warning}
+## The three things that break JSON
+
+- **A trailing comma.** `[1, 2, 3,]` is invalid. Most languages allow it; JSON
+  does not.
+- **Single quotes.** `{'a': 1}` is not JSON, it is Python. JSON needs `"a"`.
+- **Comments.** There is no way to write one. A `#` or `//` line makes the file
+  invalid.
+
+All three produce a parse error naming a line number that is often *after* the
+real mistake, because that is where the parser finally gave up.
+:::
+
+# Tables: CSV and TSV
+
+Tabular data usually arrives as one row per line, with columns separated by a
+delimiter — a comma (**CSV**) or a tab (**TSV**).
+
+```bash
+cat > samples.csv <<'EOF'
+id,group,value
+A1,control,0.42
+A2,control,0.51
+B1,treated,0.88
+EOF
+column -s, -t samples.csv
+```
+
+```text
+id  group    value
+A1  control  0.42
+A2  control  0.51
+B1  treated  0.88
+```
+
+The Part 1 tools work directly on these:
+
+```bash
+wc -l samples.csv
+head -n 1 samples.csv
+grep "treated" samples.csv
+```
+
+```text
+4 samples.csv
+id,group,value
+B1,treated,0.88
+```
+
+`cut` picks out columns:
+
+```bash
+cut -d, -f2 samples.csv | sort | uniq -c
+```
+
+```text
+      1 group
+      2 control
+      1 treated
+```
+
+`-d,` sets the delimiter and `-f2` picks field 2. Note the header got counted
+too — a reminder that these tools see lines, not tables, and know nothing about
+headers.
+
+::: {.callout-warning}
+## Prefer TSV when you get the choice
+
+Real data contains commas — in names, in descriptions, in anything free-text.
+CSV handles this by quoting the field, and then `cut -d,` gets it wrong, because
+`cut` does not understand quoting.
+
+Tabs almost never appear inside a value, so TSV avoids the problem rather than
+managing it.
+:::
+
+::: {.callout-important}
+## Never open data in Excel "just to look"
+
+Excel silently changes things and saving makes the changes permanent:
+
+- text that resembles a date becomes one, irreversibly
+- leading zeros are stripped, so `007` becomes `7`
+- long identifiers become scientific notation
+- the delimiter and encoding may change on save
+
+This is a well-documented, recurring problem in real published datasets, not a
+hypothetical. Use `head`, `less`, or VS Code.
+:::
+
+# Two things that break text files
+
+Both are invisible on screen, which is what makes them worth knowing.
+
+## Line endings
+
+Windows ends a line with two characters (`\r\n`); Linux and macOS use one
+(`\n`). A file written on Windows and read on Linux can therefore carry a
+trailing `\r` on every line — invisible, but it makes `"control"` and
+`"control\r"` different strings, and comparisons silently fail.
+
+```bash
+printf 'value\r\n' > windows.txt
+cat -e windows.txt
+```
+
+```text
+value^M$
+```
+
+`cat -e` makes it visible: `^M` is the carriage return, `$` the line end. To fix:
+
+```bash
+tr -d '\r' < windows.txt > fixed.txt
+cat -e fixed.txt
+```
+
+```text
+value$
+```
+
+::: {.callout-tip}
+VS Code shows `LF` or `CRLF` in its status bar, and clicking it converts the
+file. This is a good reason to have it open when a file is behaving strangely.
+:::
+
+## Encoding
+
+Text is stored as bytes, and an **encoding** maps bytes to characters. **UTF-8**
+is the answer everywhere now, and it handles every language and symbol.
+
+You meet this when a name with an umlaut or an accent arrives as `Ã¼` or `?` —
+the file was written in one encoding and read as another. Save as UTF-8 and the
+problem disappears.
+
+::: {.callout-tip}
+## The safest habit
+
+Stick to plain ASCII in **file names, column headers and identifiers** — letters,
+digits, underscores, hyphens. Umlauts, spaces and accents in a filename are legal
+and will eventually break a tool that was not tested with them.
+
+Use whatever you like inside the *contents* of a document. It is the names that
+travel between programs.
+:::
+
+# What you should be able to do now
+
+- [ ] Say what makes a file "plain text", and why `.xlsx` is not.
+- [ ] Write a README in Markdown with headings, a list, a link and code.
+- [ ] Read a JSON file and pull a nested value out of it.
+- [ ] Check whether a JSON file is valid, and name the three usual mistakes.
+- [ ] Pick a column out of a CSV, and say why TSV is safer.
+- [ ] Say why data should not be opened in Excel.
+- [ ] Recognise a line-ending problem and fix it.
+
+# Where to go next
+
+That is the material. If you can do the checklists at the end of all four parts,
+you have the working baseline a computational practical assumes — and rather
+more than most people start with.
+
+Everything here is worth returning to rather than memorising. That is what a
+reference is for.

@@ -1,0 +1,355 @@
+---
+title: "Part 3 — Git and GitHub"
+subtitle: "Keeping your work, and getting it back"
+---
+
+Git answers a question you will have at some point: *what did this look like
+before I broke it?*
+
+::: {.callout-tip}
+## Most of this page is executed
+
+Everything up to the GitHub section runs on a real repository each time this
+site is built. Git works entirely on your own machine — the network is only
+involved when you deliberately talk to a server.
+:::
+
+# The problem
+
+You have `analysis.py`. You change it. It stops working, and you cannot remember
+what you changed.
+
+The usual response is `analysis_v2.py`, then `analysis_final.py`, then
+`analysis_final_REALLY.py` — and a folder where nobody can tell which file
+produced which result.
+
+Git replaces all of that with one directory that remembers **every version of
+everything in it**, plus who changed what, when, and why.
+
+# Setting up
+
+Git records a name and an email with every change, so tell it who you are once:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@example.org"
+```
+
+`--global` means "for every repository on this machine", so this is a one-time
+step.
+
+```bash
+git config --global init.defaultBranch main
+```
+
+That sets what the first branch is called. `main` is the current convention.
+
+# A repository
+
+A **repository** (dt. *Repositorium*, usually just *repo*) is a directory that
+Git is watching. Make one:
+
+```bash
+mkdir myanalysis
+cd myanalysis
+git init
+```
+
+```text
+Initialized empty Git repository in /home/user1/myanalysis/.git/
+```
+
+That created a hidden `.git` directory. **That directory is the repository** —
+the entire history lives there. Delete it and you have ordinary files again.
+
+Now make something worth tracking:
+
+```bash
+echo "print('hello')" > analysis.py
+git status
+```
+
+Git reports `analysis.py` as **untracked**: it can see the file but is not
+watching it yet.
+
+# The three steps
+
+Saving work in Git is deliberately three steps, not one.
+
+```bash
+git add analysis.py
+git commit -m "Add the analysis script"
+```
+
+```text
+[main (root-commit) 9c1f2ab] Add the analysis script
+ 1 file changed, 1 insertion(+)
+```
+
+| step | what it means |
+|---|---|
+| edit | change files as usual |
+| `git add` | choose what goes into the next snapshot ("staging") |
+| `git commit` | take the snapshot, with a message saying why |
+
+The middle step looks like bureaucracy and is not: it lets you commit *some* of
+your changes and leave the rest. Two unrelated fixes become two commits with two
+clear messages, instead of one commit called "stuff".
+
+::: {.callout-tip}
+## Write the message for the person reading it later
+
+That person is you, in six months, trying to find where something broke.
+
+"Fix bug" is worthless. "Fix the off-by-one that dropped the last row" is worth
+the extra ten seconds. Say **why**, not what — the diff already shows what.
+:::
+
+## Seeing what happened
+
+```bash
+echo "print('goodbye')" >> analysis.py
+git status --short
+```
+
+```text
+ M analysis.py
+```
+
+`M` for modified. To see the actual change:
+
+```bash
+git diff
+```
+
+```text
+@@ -1 +1,2 @@
+ print('hello')
++print('goodbye')
+```
+
+Lines with `+` were added, `-` removed. Commit it:
+
+```bash
+git add analysis.py
+git commit -m "Say goodbye as well as hello"
+git log --oneline
+```
+
+```text
+4d5e6f7 Say goodbye as well as hello
+9c1f2ab Add the analysis script
+```
+
+That list is the point of the whole exercise.
+
+::: {.callout-important}
+## Do not commit data
+
+Git is built for text — code, scripts, notes, configuration. It is bad at large
+binary files: it keeps every version forever, so a 2 GB dataset committed once
+is in the repository permanently, even after you delete it.
+
+Keep data outside the repository, or list it in a `.gitignore`:
+
+```bash
+printf "results/\n*.csv\n" > .gitignore
+git add .gitignore
+git commit -m "Ignore results and data files"
+```
+
+Now Git stops offering to track them. **What belongs in a repository is
+everything needed to *reproduce* the results** — including `pixi.toml` and
+`pixi.lock` from Part 2 — not the results themselves.
+:::
+
+# Going back
+
+The reason for all of it. Discard changes you have not committed:
+
+```bash
+echo "print('a terrible mistake')" >> analysis.py
+git restore analysis.py
+git diff
+```
+
+`git diff` prints nothing: the file is back to its last committed state, and the
+mistake is gone.
+
+Look at an old version without changing anything:
+
+```bash
+git show HEAD~1:analysis.py
+```
+
+```text
+print('hello')
+```
+
+`HEAD` is where you are now; `HEAD~1` is one commit before it. Nothing was
+modified — Git just read an old version out of its history.
+
+# Branches
+
+A **branch** is a separate line of work. Try something risky without touching
+what already works:
+
+```bash
+git switch -c experiment
+echo "print('a new idea')" >> analysis.py
+git add analysis.py
+git commit -m "Try a new idea"
+```
+
+`-c` creates the branch and moves you onto it. Switch back:
+
+```bash
+git switch main
+cat analysis.py
+```
+
+```text
+print('hello')
+print('goodbye')
+```
+
+The new idea is not here — it is on `experiment`, intact. Keep it:
+
+```bash
+git merge experiment
+cat analysis.py
+```
+
+```text
+print('hello')
+print('goodbye')
+print('a new idea')
+```
+
+Or abandon it, by simply never merging.
+
+```bash
+git log --oneline --graph --all
+```
+
+::: {.callout-note}
+## Merge conflicts
+
+If the same lines changed on both branches, Git cannot decide and says so. It
+marks the disagreement in the file with `<<<<<<<` and `>>>>>>>`, and waits.
+
+You edit the file so it says what you want, delete the markers, then `git add`
+and `git commit`. That is all a conflict is: Git declining to guess. It is not a
+sign anything is broken.
+:::
+
+# GitHub
+
+Everything so far was local. **GitHub** is a website that hosts Git
+repositories, so you can back them up, work from more than one machine, and let
+other people see your work. It is not Git — it is one of several hosts, alongside
+GitLab and others.
+
+::: {.callout-note}
+## The commands below are not executed
+
+Unlike the rest of this page, these need an account, credentials and a real
+server, so they are written out rather than run.
+:::
+
+Make an empty repository on GitHub through the website, then connect your local
+one to it:
+
+```{.bash .no-run}
+git remote add origin https://github.com/yourname/myanalysis.git
+git push -u origin main
+```
+
+`origin` is the conventional name for "the server this came from". After the
+first push, sending later commits is one word:
+
+```{.bash .no-run}
+git push
+```
+
+And to collect changes made elsewhere:
+
+```{.bash .no-run}
+git pull
+```
+
+Starting from someone else's repository instead:
+
+```{.bash .no-run}
+git clone https://github.com/someone/theirproject.git
+cd theirproject
+```
+
+`clone` copies the entire history, not just the current files — so you get every
+version and can work offline immediately.
+
+## The everyday loop
+
+```{.bash .no-run}
+git pull                          # get what others changed
+# ... do some work ...
+git add .
+git commit -m "Describe what you did"
+git push                          # send it back
+```
+
+::: {.callout-tip}
+## Make a GitHub profile, and treat it as one
+
+It costs nothing and it accumulates. A practical you did properly — a repository
+with a clear README, code that runs, and an environment file that lets someone
+reproduce it — is a genuine example of your work, and it will be the first thing
+in a portfolio you did not realise you were building.
+
+That is a much better reason to write decent commit messages than being told to.
+:::
+
+# When it goes wrong
+
+**"Please tell me who you are."** You skipped the `git config` step above.
+
+**You committed something you should not have.** If you have not pushed,
+`git reset --soft HEAD~1` undoes the commit and keeps the changes. If you *have*
+pushed — especially a password or a key — treat it as public: the fix is to
+change the secret, not to rewrite history. Removing a commit from a public
+repository does not remove it from everyone who already has a copy.
+
+**`git push` is rejected.** Someone else pushed first. `git pull`, resolve
+anything that conflicts, then push again.
+
+**You are lost.** `git status` almost always tells you where you are and what it
+thinks you should do next. Read it before doing anything drastic.
+
+::: {.callout-warning}
+## Be careful with advice from the internet
+
+Searching a Git error reliably turns up `git reset --hard` and `git push
+--force`. Both can destroy work permanently, and both are usually the wrong
+answer to a beginner's problem.
+
+`git status` and `git log` never destroy anything. Start there.
+:::
+
+# What you should be able to do now
+
+- [ ] Explain why `analysis_final_REALLY.py` is not version control.
+- [ ] Configure your name and email.
+- [ ] Make a repository and commit a file to it.
+- [ ] Say what `add` does that `commit` does not.
+- [ ] Write a commit message worth reading.
+- [ ] See what changed with `git status`, `git diff` and `git log`.
+- [ ] Recover a file you broke but had not committed.
+- [ ] Say why data does not belong in a repository, and what does.
+- [ ] Make a branch, commit on it, and merge it back.
+- [ ] Push to GitHub and pull from it.
+
+# Where to go next
+
+**[Part 4 — Files you will meet](04-file-formats.qmd)** covers the formats that
+turn up around all of this: Markdown for the README your repository should have,
+JSON for what tools hand back, and the tabular formats in between.

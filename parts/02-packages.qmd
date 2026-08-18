@@ -1,0 +1,238 @@
+---
+title: "Part 2 — Installing and managing tools"
+subtitle: "pixi, and the conda/mamba world you will meet anyway"
+---
+
+Part 1 assumed the tools were already there. This part is about getting them,
+and about the problem that makes "getting them" harder than it sounds.
+
+::: {.callout-note}
+## Most commands on this page are not executed
+
+Unlike Part 1, the examples here install software: they need the network, take
+minutes, and several of them are about the installer you do not have yet. They
+are written out rather than run, so treat the exact version numbers as
+illustrative.
+:::
+
+# The problem
+
+You install a tool. It works. Six months later you install a second tool for a
+different project, and the first one stops working.
+
+This is not bad luck. Tools are built on other tools — libraries, interpreters,
+system packages — and two programs can genuinely need **different, incompatible
+versions of the same dependency**. Installing one system-wide overwrites what
+the other needed.
+
+There are three things a package manager has to do about that:
+
+1. **Install software** without you compiling anything.
+2. **Resolve dependencies** — work out a set of versions that satisfies
+   everything at once, or say clearly that none exists.
+3. **Keep projects apart**, so one project's tools cannot break another's.
+
+The third is what an **environment** (dt. *Umgebung*) is for: a self-contained
+set of tools belonging to one project. Two environments on the same machine can
+hold different versions of the same program and never notice each other.
+
+::: {.callout-important}
+## The other reason environments matter
+
+An environment can be written down. If the exact set of versions that produced a
+result is recorded in a file, someone else — including you, next year — can
+recreate it and get the same result.
+
+Without that, "it worked on my machine" is the end of the conversation rather
+than the start of one. This is the single strongest argument for doing any of
+this, and it is why the file matters more than the tool.
+:::
+
+# pixi
+
+**[pixi](https://pixi.sh) is what this material recommends.** It is a package
+manager built on the same package repositories the older tools use, so it can
+install the same software — but it is organised around the *project* rather than
+around your machine.
+
+## Installing pixi
+
+```{.bash .no-run}
+curl -fsSL https://pixi.sh/install.sh | bash
+```
+
+Close the terminal and open a new one, then check it is there:
+
+```{.bash .no-run}
+pixi --version
+```
+
+::: {.callout-warning}
+## About `curl … | bash`
+
+You just downloaded a script and ran it without reading it. That is worth
+noticing rather than doing on reflex — it is how installers work, and it is also
+how a bad day starts. The habit worth having: do this only for projects you have
+reason to trust, and prefer the official domain over a link someone pasted at
+you.
+:::
+
+## Starting a project
+
+```{.bash .no-run}
+pixi init myproject
+cd myproject
+```
+
+That makes a directory with a `pixi.toml` in it. Add a tool:
+
+```{.bash .no-run}
+pixi add python
+```
+
+Now run something inside the project's environment:
+
+```{.bash .no-run}
+pixi run python --version
+```
+
+The important part: **you never "activated" anything.** `pixi run` uses this
+project's tools because you are standing in this project's directory. Move to a
+different project and the same command gets that project's tools instead.
+
+## The two files
+
+| file | what it is | commit it? |
+|---|---|---|
+| `pixi.toml` | what you *asked for* — "python, and samtools" | **yes** |
+| `pixi.lock` | what you actually *got* — every package, exact version, checksum | **yes** |
+
+The lock file is the part that makes the environment reproducible. `pixi.toml`
+says "a recent python"; `pixi.lock` says precisely which one, for every platform
+the project supports. Someone who clones your project and runs:
+
+```{.bash .no-run}
+pixi install
+```
+
+gets exactly what you had, not merely something similar. **Commit both files.**
+Deleting the lock file to "fix" something throws away the only record of what
+worked.
+
+## Channels
+
+Packages come from **channels** — repositories of prebuilt software. Two matter:
+
+- **conda-forge** — general-purpose: Python, R, compilers, libraries.
+- **bioconda** — life-science tools.
+
+They are declared in `pixi.toml`, per project, so a project carries its own
+sources rather than depending on how your machine was configured:
+
+```toml
+[workspace]
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64"]
+```
+
+::: {.callout-warning}
+## bioconda does not build for Windows
+
+There are no Windows packages for most life-science tools. This is not an
+oversight that will be fixed — it is why Part 1 tells Windows users to install
+WSL2. Inside WSL2 you are on `linux-64` and everything works.
+
+macOS is supported, but not universally: some tools have no Apple Silicon build,
+and a project that solves on Linux may not solve on a Mac.
+:::
+
+# conda and mamba
+
+You will meet these. Most documentation you find, most papers' methods sections
+and most older lab protocols are written for **conda**, so it is worth knowing
+what they are even though this material does not recommend them for new work.
+
+| | |
+|---|---|
+| **conda** | the original. Same channels, same packages. Its dependency solver could be extremely slow — minutes to hours on a big environment. |
+| **mamba** | a much faster reimplementation of conda's solver. For a long time the standard advice was "install conda, then immediately use mamba instead". |
+| **pixi** | project-first, with a lock file by default. Same packages again. |
+
+Modern conda is much faster than it was — it adopted the same solver technology
+mamba introduced — so the old "conda is unusably slow" advice is out of date.
+The reason to prefer pixi is not speed.
+
+## Translating between them
+
+If you find instructions written for conda, this is roughly what they mean:
+
+| conda / mamba | pixi |
+|---|---|
+| `conda create -n myenv` | `pixi init myproject` |
+| `conda activate myenv` | *(nothing — be in the directory)* |
+| `conda install samtools` | `pixi add samtools` |
+| `conda deactivate` | *(nothing)* |
+| `conda env export > env.yml` | *(already done — `pixi.lock`)* |
+| `conda env create -f env.yml` | `pixi install` |
+
+## Why this material recommends pixi
+
+Three concrete differences, not a matter of taste:
+
+1. **The lock file is not optional.** conda can produce one, with extra tooling
+   and discipline. pixi writes one every time, so reproducibility is the default
+   rather than an achievement.
+2. **The environment belongs to the project, not to you.** There is no global
+   list of environments to keep straight, and no activated state to forget. If
+   you are in the directory, you have the right tools.
+3. **Nothing to activate means nothing to forget.** The single most common
+   failure with conda is running a command in the wrong environment and getting
+   a confusing error — or worse, a wrong result from an older version.
+
+::: {.callout-note}
+## None of this makes conda wrong
+
+It is used everywhere, it works, and you will need to read it. If you join a
+group that uses conda, use conda. The concepts transfer completely: channels,
+environments, dependency resolution and a written-down specification are the
+same ideas in both.
+:::
+
+# When it goes wrong
+
+**"Solving environment" takes forever, then fails.** The tool is telling you no
+combination of versions satisfies everything you asked for. Usually one pinned
+version is the problem. Loosen the constraint, or install the awkward tool in
+its own separate project — two environments are cheap and a broken one is not.
+
+**The tool installs but will not run.** Often an architecture mismatch: a
+package built for `linux-64` on an Apple Silicon Mac, or the reverse. Check what
+platforms the project declares.
+
+**It works for you and not for a colleague.** This is what the lock file exists
+to prevent. If they have it and still differ, the difference is outside the
+environment — the operating system, or a tool that was installed some other way.
+
+::: {.callout-tip}
+## Never install project tools system-wide
+
+`sudo apt install <a scientific tool>` puts it outside every environment, where
+nothing records it and nothing can reproduce it. It also tends to be an old
+version. Keep project tools in the project.
+:::
+
+# What you should be able to do now
+
+- [ ] Say why two projects might need different versions of the same tool.
+- [ ] Install pixi and start a project with it.
+- [ ] Add a tool and run it, without activating anything.
+- [ ] Say what `pixi.toml` and `pixi.lock` each contain, and why both are
+      committed.
+- [ ] Recreate someone else's environment from their project.
+- [ ] Read a set of conda instructions and translate them.
+- [ ] Explain why a life-science tool may not install on Windows or on a Mac.
+
+# Where to go next
+
+**[Part 3 — Git and GitHub](03-git.qmd)** is how those two files — and the rest
+of your work — get kept, shared and recovered.

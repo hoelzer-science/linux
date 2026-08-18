@@ -11,17 +11,22 @@ through before a practical rather than during one.
 
 ## Start here
 
-- [Part 1 — The command line](parts/01-command-line.qmd)
-
-Parts 2 (package management) and 3 (Git) are being written.
+| | |
+|---|---|
+| **[Part 1 — The command line](parts/01-command-line.qmd)** | Terminal, paths, commands, pipes, wildcards |
+| **[Part 2 — Installing and managing tools](parts/02-packages.qmd)** | pixi, and the conda/mamba world you will meet anyway |
+| **[Part 3 — Git and GitHub](parts/03-git.qmd)** | Keeping your work, and getting it back |
+| **[Part 4 — Files you will meet](parts/04-file-formats.qmd)** | Markdown, JSON, tables, and why text files misbehave |
 
 ::: {.callout-note}
-## You do not need to finish everything
+## You do not need to finish everything first
 
 **Part 1 is the part that gates a practical.** If you can open a terminal, say
 where you are in the filesystem, read a command with its parameters, and send
-output from one command into another, you have enough to start. Parts 2 and 3
-matter once you are installing your own tools and keeping your own work.
+output from one command into another, you have enough to start.
+
+The rest matters as you meet it — Part 2 when you install your own tools, Part 3
+when you have work worth keeping, Part 4 whenever a file misbehaves.
 :::
 
 ## Who this is for

@@ -14,16 +14,21 @@ A public, module-agnostic crash course in the command line, package management
 and Git. Deployed to **linux.hoelzer.science**. Written notes are the primary
 artifact; a short kickoff deck is secondary and does not exist yet.
 
-Three parts, and only the first one gates anything:
+Four parts, and only the first one gates anything:
 
 | | | |
 |---|---|---|
-| **Part 1** | terminal, filesystem and paths, commands and parameters, wildcards, pipes and redirection | **gates a first practical** |
-| Part 2 | package management — pixi primary, conda/mamba as context | not written |
-| Part 3 | a Git/GitHub detour | not written |
+| **Part 1** | terminal, filesystem and paths, commands and parameters, pipes and redirection, wildcards | **gates a first practical** |
+| Part 2 | pixi primary, conda/mamba as the thing readers will meet anyway | |
+| Part 3 | Git and GitHub | |
+| Part 4 | Markdown, JSON, CSV/TSV, line endings and encodings | |
 
 **Only Part 1 gates the practicals**, so the minimum viable dependency is much
-smaller than the whole course. Do not let Parts 2 and 3 hold up Part 1.
+smaller than the whole course.
+
+**Part 4 was added on Martin's list** (2026-08-18) and is explicitly the
+extensible one: formats get added as they earn a place, and it does not have to
+be complete to be useful.
 
 ## This repository is PUBLIC — and that is load-bearing
 

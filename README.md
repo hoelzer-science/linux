@@ -56,8 +56,10 @@ pixi.toml / pixi.lock     environment; lockfile MUST be committed
 
 index.qmd                 landing page
 parts/01-command-line.qmd Part 1 — terminal, paths, commands, pipes, wildcards
-parts/02-packages.qmd     Part 2 — package management (not written yet)
-parts/03-git.qmd          Part 3 — Git (not written yet)
+parts/02-packages.qmd     Part 2 — pixi, and conda/mamba as context
+parts/03-git.qmd          Part 3 — Git and GitHub
+parts/04-file-formats.qmd Part 4 — Markdown, JSON, CSV/TSV, encodings
+figures/                  hand-written SVG; own figures only
 
 tests/test_examples.py    executes every shell example
 scripts/check-links.sh    every local link and image must resolve

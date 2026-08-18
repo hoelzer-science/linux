@@ -1,6 +1,5 @@
 # Generated output — never committed, always rebuilt.
 _site/
-_lms/
 .quarto/
 *_files/
 
@@ -33,6 +32,20 @@ __pycache__/
 # publishing constraint in CLAUDE.md). CLAUDE.md itself is committed.
 NEXT.md
 docs/sessions/
+
+# Instructor drop zone. IGNORED, and this is the one difference from the
+# course repository that matters most.
+#
+# There, incoming/ is committed and stays as the record of what was handed
+# over -- safe, because that repository is private. Here the repository is
+# PUBLIC, so committing a dropped slide deck would publish it, along with
+# whatever third-party figures it contains and whatever licence they carry.
+# Drops are a working area only; what survives is the material written from
+# them, with provenance established at the point of use.
+#
+# The README is committed so the directory documents itself.
+instructor/incoming/*
+!instructor/incoming/README.md
 
 # Editors
 .vscode/

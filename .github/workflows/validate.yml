@@ -2,13 +2,12 @@ name: validate
 
 # Validate every push and pull request; deploy main to Cloudflare Pages.
 #
-# Deploying on every push to main is safe because publishing a SESSION is a
-# separate, deliberate act: only sessions listed in the render allowlist in
-# _quarto.yml reach _site at all. So main deploys continuously, while course
-# content is released when you decide to release it.
+# Unlike the course template this repository was created from, there is no
+# release gate here and no auth worker: this site is public and everything on
+# it is meant to be read. Pushing to main IS publishing.
 #
-# The rule this enforces: whatever is on main must render, its code must run,
-# and it must contain nothing students should not see.
+# The rule this enforces: whatever is on main must render, every shell example
+# on it must actually run, and every link must resolve.
 
 on:
   push:
@@ -37,32 +36,24 @@ jobs:
       - name: Lint
         run: pixi run lint
 
-      # Runs on node from the runner image; no dependencies. Auth code that is
-      # never exercised is how a site ends up publicly readable unnoticed.
-      - name: Test auth worker
-        run: node cloudflare/worker.test.mjs
-
-      - name: Test practical solutions
+      # The point of the whole repository: the commands we tell people to run
+      # are extracted from the pages and executed. A broken example here is a
+      # broken example for every reader.
+      #
+      # This runs on ubuntu, which is the platform the material targets --
+      # including for Windows readers, who are told to use WSL2.
+      - name: Test every shell example
         run: pixi run test
 
-      # Invoke the same pixi tasks a person would run locally. CI previously
-      # called publish.sh directly while `pixi run lms` called quarto directly,
-      # so a bug in the task definition passed CI and broke the real workflow.
-      - name: Render both builds
-        run: |
-          pixi run site
-          pixi run lms
+      - name: Render site
+        run: pixi run site
 
-      - name: Show release status
-        run: pixi run status
-
-      # Broken links, and .qmd links -- which mean either an unrewritten LMS
-      # link or a link to a session held back from the render allowlist.
       - name: Check internal links
         run: pixi run check-links
 
-      # Solutions, instructor material, and raw source files copied in as
-      # resources -- the last happens when a page links to a held-back session.
+      # Instructor drops and raw source files. instructor/ is gitignored here
+      # (see instructor/README.md), so this is a second line of defence rather
+      # than the first -- but a public site earns both.
       - name: Check published output
         run: pixi run check-output
 
@@ -84,22 +75,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
-
       # Deploy exactly the bytes that were validated, rather than re-rendering
       # and hoping the second render matches the first.
+      #
+      # No checkout step: unlike the course template, nothing from the repo is
+      # needed at deploy time. The template checked out in order to copy the
+      # auth worker into _site/, and this site has no worker.
       - name: Download validated site
         uses: actions/download-artifact@v8
         with:
           name: site
           path: _site
-
-      # Cloudflare Pages "advanced mode": _worker.js at the root of the
-      # uploaded directory intercepts every request, including static assets.
-      - name: Add auth worker
-        run: |
-          cp cloudflare/_worker.js _site/_worker.js
-          test -f _site/_worker.js || { echo "::error::worker not copied"; exit 1; }
 
       # Fail with a readable message rather than a confusing wrangler error.
       - name: Check deploy configuration

@@ -1,34 +1,34 @@
 # Instructor material
 
-Not rendered into the site. `_quarto.yml` excludes `instructor/**` and
-`**/solution/**` from `project.render`, so nothing here reaches `_site/`
-or `_lms/`.
+Working area. Not rendered into the site — `_quarto.yml` excludes
+`instructor/**` from `project.render`, so nothing here reaches `_site/`.
 
-**That is a build-time exclusion, not access control.** These files are in
-the Git repository. Anyone with repository access can read them. Since this
-course is distributed via Moodle rather than published, that is fine — but it
-means:
+## This repository is PUBLIC, and that inverts the usual rule
 
-- the repository must stay **private**
-- exams belong in a **separate** private repository, not here
-- if the repository is ever opened up, solutions and notes must move out first
+In the course repository, `instructor/` is committed: that repo is private, so
+the exclusion is only about keeping teaching material off the student-facing
+site. **Here it is the other way round.** A build-time exclusion is not access
+control, and this repository is world-readable — so anything committed under
+`instructor/` is published, whether or not it appears on the site.
+
+Therefore:
+
+- **`instructor/incoming/` is gitignored** (see `.gitignore`, which says why).
+  Dropped slide decks, figures and scratch material stay local. What survives a
+  drop is the *material written from it*, with provenance established at the
+  point of use.
+- Nothing under `instructor/` may name an institution, a module code, a term or
+  a scheduled course — the same publishing constraint the hub carries.
+- If something genuinely needs to be committed and kept out of sight, it does
+  not belong in this repository at all.
 
 ## Contents
 
-- `semester-notes/` — post-session retrospectives, one file per session per
-  semester. Written immediately after teaching, while it is still fresh.
-  Over several years this is the most valuable directory in the repository:
-  it is the only place that records what actually happened in the room.
-- `lesson-plans/` — timing and delivery notes.
-- `grading/` — rubrics.
+- `incoming/` — the drop zone. See its own README.
 
-## Semester rollover
+## Why there is no `semester-notes/` or `grading/`
 
-1. Tag the state you actually taught: `git tag v2026-winter && git push --tags`
-2. Write the retrospectives (if not already done per session).
-3. Work the improvements into `main`.
-4. Update `_course.yml` for the new term.
-
-Do not branch per semester and let branches diverge — tag instead. Tags are
-free, and a tag records history without creating a parallel version to
-maintain.
+Both came from the course template and were removed. This is not a course: it
+has no cohort, no term, no assessment and no room. It is a reference site that
+several modules link to. Retrospectives about *teaching* belong in the module
+repository that did the teaching.

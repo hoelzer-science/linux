@@ -6,8 +6,7 @@
 
   1. Without a top-level 404.html, Pages assumes the deployment is a
      single-page application and serves / for every unmatched path -- so a
-     held-back session returned the home page with status 200 instead of a
-     404.
+     wrong URL returned the home page with status 200 instead of a 404.
   2. Pages serves the closest 404.html but the browser URL stays at the
      requested depth, so a page using relative asset paths (as every Quarto
      page does) would load unstyled. Everything here is inline: no CSS, no
@@ -54,19 +53,18 @@
     <h1>Page not found</h1>
 
     <p>
-      There is nothing at this address. The most likely reason is that the
-      session has not been published yet — material goes online in the week it
-      is taught.
+      There is nothing at this address. Parts 2 (package management) and 3 (Git)
+      are still being written, so a link to either will land here for now.
     </p>
 
     <ul>
-      <li><a href="/">Course home</a></li>
-      <li><a href="/schedule.html">Schedule</a> — what is coming when</li>
+      <li><a href="/">Home</a></li>
+      <li><a href="/parts/01-command-line.html">Part 1 — The command line</a></li>
     </ul>
 
     <p class="hint">
-      If a link from the course page or from Moodle brought you here, that is a
-      mistake on my side — please let me know.
+      If a link from somewhere else brought you here, that is a mistake on my
+      side — please let me know.
     </p>
   </body>
 </html>

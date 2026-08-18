@@ -129,10 +129,12 @@ def test_every_shell_example_runs(qmd: Path, tmp_path: Path) -> None:
 # decision to be justified in the same commit, not a formality.
 NO_RUN_BUDGET = {
     # `man` need not exist on a minimal image; `less` is interactive; `head
-    # --help` is GNU-only; and one deliberately fictional `some_tool` call
-    # shows the shape of a real multi-parameter invocation without tying the
-    # page to any one field's software.
-    "01-command-line": 4,
+    # --help` is GNU-only; one deliberately fictional `some_tool` call shows
+    # the shape of a real multi-parameter invocation without tying the page
+    # to any one field's software; and one intentionally-broken `cd lab
+    # notebook` (unquoted) demonstrates the failure a space in a filename
+    # causes -- it must not run, because it is supposed to fail.
+    "01-command-line": 5,
     # Installing software needs the network and minutes of runtime, and the
     # whole point of the page is the installer you do not yet have. Almost
     # nothing here can honestly run in CI.

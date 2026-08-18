@@ -395,6 +395,55 @@ alpha
 
 Here `-n` takes the value `1`, and `data/first.txt` is the argument.
 
+## Spaces split arguments — so avoid them in names
+
+This follows directly from what an argument is. The shell splits what you type
+on whitespace *before* the command ever sees it, so a space inside a filename
+is indistinguishable from a space between two arguments.
+
+```bash
+mkdir -p "lab notebook"
+ls
+```
+
+```text
+lab notebook
+```
+
+That worked because of the quotes. Without them:
+
+```{.bash .no-run}
+cd lab notebook
+```
+
+```text
+bash: cd: lab: No such file or directory
+```
+
+`cd` receives **two** arguments, `lab` and `notebook`, not one. It looks for a
+directory literally called `lab`, which does not exist. Quoting fixes it —
+
+```bash
+cd "lab notebook"
+pwd
+cd ..
+```
+
+— but quoting is a workaround you have to remember **every time**, for every
+command, forever. The actual fix is upstream of all of it: **do not create
+files or folders with spaces in their names.** Use `lab_notebook` or
+`lab-notebook` instead, and the problem never comes up.
+
+This is not academic — it is the single most common way a beginner's own file
+breaks the terminal, because graphical file managers and Windows both allow
+spaces freely, and the terminal is the first place the difference bites.
+
+::: {.callout-tip}
+Tab-completion protects you here too: complete a space-containing name and the
+shell quotes or escapes it for you automatically. One more reason it is worth
+using even when you think you remember the name.
+:::
+
 ## A realistic invocation
 
 One flag on a small command is not what a real call looks like. Here is one that
@@ -844,6 +893,7 @@ practical assumes.
 - [ ] Make a directory, copy, rename and delete a file — carefully.
 - [ ] Read a command and name its parameters and arguments.
 - [ ] Read a command written across several lines with backslashes.
+- [ ] Explain why a space in a filename breaks a command, and avoid making one.
 - [ ] Find out what a command does, with `--help` or `man`, and quit the pager.
 - [ ] Send output to a file with `>`, and know what `>>` does differently.
 - [ ] Chain two commands with a pipe and explain what each half does.

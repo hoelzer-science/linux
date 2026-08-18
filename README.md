@@ -32,9 +32,11 @@ pixi run lint && pixi run test && pixi run site && pixi run check
 
 ## Every command on the site is executed
 
-`tests/test_examples.py` extracts the `bash` blocks from `parts/*.qmd` and runs
-them in order, in one shell, in a scratch directory. A block can rely on files
-an earlier block made, exactly as a reader can.
+`tests/test_examples.py` extracts the `bash` blocks from `parts/*.qmd` **and
+`slides.qmd`** and runs them in order, in one shell, in a scratch directory. A
+block can rely on files an earlier block made, exactly as a reader can. The
+deck is not exempted for being a deck — reused command examples are exactly
+where a page quietly drifts from what was actually verified.
 
 This is the whole reason the repository has an environment. Prose about what a
 tool does cannot be checked mechanically; a command can.
@@ -55,6 +57,7 @@ _quarto.yml               website config; also controls what is NOT rendered
 pixi.toml / pixi.lock     environment; lockfile MUST be committed
 
 index.qmd                 landing page
+slides.qmd                kickoff deck (revealjs) — a map, not the material
 parts/01-command-line.qmd Part 1 — terminal, paths, commands, pipes, wildcards
 parts/02-packages.qmd     Part 2 — pixi, and conda/mamba as context
 parts/03-git.qmd          Part 3 — Git and GitHub

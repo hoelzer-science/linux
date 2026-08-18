@@ -12,7 +12,16 @@ changes. Current working state lives in `NEXT.md`; session history in
 
 A public, module-agnostic crash course in the command line, package management
 and Git. Deployed to **linux.hoelzer.science**. Written notes are the primary
-artifact; a short kickoff deck is secondary and does not exist yet.
+artifact; `slides.qmd` is a short revealjs kickoff deck, secondary by design —
+it is a map to the four parts, not a replacement for them.
+
+**The deck is written differently from a lecture deck, and deliberately.** A
+course lecture assumes a narrator, so its slides are sparse. This deck has to
+survive both being clicked through alone (Martin may not present it the first
+time it is used) and being presented live in a later year — so slide bodies
+carry complete sentences, while `::: {.notes}` carries the live-presenter
+talking points. The file's own header comment says this; do not sparsify it to
+match the lecture convention, that would break the self-serve case.
 
 Four parts, and only the first one gates anything:
 

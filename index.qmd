@@ -13,10 +13,14 @@ through before a practical rather than during one.
 
 | | |
 |---|---|
+| **[Kickoff slides](slides.qmd)** | A fast tour of all four parts, in about fifteen minutes |
 | **[Part 1 — The command line](parts/01-command-line.qmd)** | Terminal, paths, commands, pipes, wildcards |
 | **[Part 2 — Installing and managing tools](parts/02-packages.qmd)** | pixi, and the conda/mamba world you will meet anyway |
 | **[Part 3 — Git and GitHub](parts/03-git.qmd)** | Keeping your work, and getting it back |
 | **[Part 4 — Files you will meet](parts/04-file-formats.qmd)** | Markdown, JSON, tables, and why text files misbehave |
+
+The slides are a map, not the material — click through them first if you want
+the shape of the whole thing before reading Part 1 properly.
 
 ::: {.callout-note}
 ## You do not need to finish everything first

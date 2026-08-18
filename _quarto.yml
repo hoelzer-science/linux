@@ -15,6 +15,7 @@ project:
   # nothing to hold back, so an allowlist would be ceremony that goes stale.
   render:
     - "index.qmd"
+    - "slides.qmd"
     - "parts/*.qmd"
 
     # Belt and braces. The list above already excludes these; saying so
@@ -48,6 +49,8 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: slides.qmd
+        text: Kickoff slides
       - href: parts/01-command-line.qmd
         text: "1 — Command line"
       - href: parts/02-packages.qmd

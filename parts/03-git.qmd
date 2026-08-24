@@ -247,15 +247,89 @@ Or abandon it, by simply never merging.
 git log --oneline --graph --all
 ```
 
-::: {.callout-note}
 ## Merge conflicts
 
-If the same lines changed on both branches, Git cannot decide and says so. It
-marks the disagreement in the file with `<<<<<<<` and `>>>>>>>`, and waits.
+If the same lines changed on both branches, Git cannot decide which version you
+want, and says so. This is not a rare edge case — it is one of the first things
+a beginner hits, especially in a small team where two people edit the same file
+in the same week.
 
-You edit the file so it says what you want, delete the markers, then `git add`
-and `git commit`. That is all a conflict is: Git declining to guess. It is not a
-sign anything is broken.
+::: {.callout-note}
+## These commands are not executed automatically
+
+A conflict needs two branches that genuinely disagree, on purpose, which is not
+something a build script should manufacture on every run. So this walkthrough
+is written out rather than run — but every command and every line of output
+below is a real transcript, captured by running these exact commands once.
+:::
+
+Two branches, each changing the same line differently:
+
+```{.bash .no-run}
+git switch -c change-greeting-a
+printf "print('hi there')\nprint('goodbye')\nprint('a new idea')\n" > analysis.py
+git add analysis.py
+git commit -m "Change the greeting to 'hi there'"
+
+git switch main
+printf "print('hey!')\nprint('goodbye')\nprint('a new idea')\n" > analysis.py
+git add analysis.py
+git commit -m "Change the greeting to 'hey!'"
+```
+
+Merge them:
+
+```{.bash .no-run}
+git merge change-greeting-a
+```
+
+```text
+Auto-merging analysis.py
+CONFLICT (content): Merge conflict in analysis.py
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+Git could not decide, so it stopped and left both versions in the file:
+
+```{.bash .no-run}
+cat analysis.py
+```
+
+```text
+<<<<<<< HEAD
+print('hey!')
+=======
+print('hi there')
+>>>>>>> change-greeting-a
+print('goodbye')
+print('a new idea')
+```
+
+Everything above `=======` is your current branch (`HEAD`); everything below is
+the branch you are merging in, named after the marker. Only the lines that
+actually disagree are wrapped like this — the rest of the file is untouched.
+
+Edit the file so it says what you actually want, and delete all three marker
+lines. `<<<<<<<`, `=======` and `>>>>>>>` are not part of the file — Git put
+them there only to show you the disagreement:
+
+```{.bash .no-run}
+printf "print('hey there')\nprint('goodbye')\nprint('a new idea')\n" > analysis.py
+git add analysis.py
+git commit -m "Resolve the greeting conflict"
+```
+
+That is all a conflict is: Git declining to guess, and you telling it what you
+actually meant. `git add` marks the file resolved, and `git commit` finishes the
+merge — the same two steps as any other change. It is not a sign anything is
+broken.
+
+::: {.callout-tip}
+## `git status` orients you mid-conflict too
+
+If you get lost partway through, `git status` names the conflicted file and
+reminds you what to do next. Reading it is always the right first move here,
+same as everywhere else in Git.
 :::
 
 # GitHub
@@ -355,7 +429,9 @@ this within the first hour:
 
 Someone else pushed while you were working. Nothing is broken and nothing is
 lost — Git is refusing to overwrite their work with yours. `git pull`, sort out
-anything that conflicts, then push again.
+anything that conflicts — a `git pull` conflict looks and resolves exactly like
+the [merge conflict](#merge-conflicts) above, `pull` is just `fetch` plus
+`merge` — then push again.
 
 That works, but it gets tiring, and it means every half-finished change lands
 straight on the branch everyone else is using. The usual answer is the one from
@@ -489,6 +565,7 @@ answer to a beginner's problem.
 - [ ] Recover a file you broke but had not committed.
 - [ ] Say why data does not belong in a repository, and what does.
 - [ ] Make a branch, commit on it, list branches, and merge it back.
+- [ ] Recognise a merge conflict, resolve it by hand, and finish the merge.
 - [ ] Push to GitHub and pull from it.
 - [ ] Say what to do when a push is rejected.
 - [ ] Push a branch and open a pull request from it.

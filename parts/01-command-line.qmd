@@ -313,6 +313,14 @@ first.txt
 second.txt
 ```
 
+::: {.callout-tip}
+## Try it now
+
+You have two real files to practice on. Type `cat data/fi` and press
+<kbd>Tab</kbd> — it completes to `data/first.txt`. This is the habit from
+above, the moment it actually saves you something.
+:::
+
 Copying, renaming and moving:
 
 ```bash

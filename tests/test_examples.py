@@ -139,11 +139,15 @@ NO_RUN_BUDGET = {
     # whole point of the page is the installer you do not yet have. Almost
     # nothing here can honestly run in CI.
     "02-packages": 10,
-    # Local git is fully testable and is fully tested. The exemptions are the
-    # GitHub round trip only: remote add, push, pull, clone, the everyday loop,
-    # and the branch push that precedes a pull request. All need credentials
-    # and a real remote.
-    "03-git": 8,
+    # Local git is fully testable and is fully tested. Two kinds of exemption:
+    # the GitHub round trip (remote add, push, pull, clone, the everyday loop,
+    # and the branch push that precedes a pull request -- all need credentials
+    # and a real remote), and the merge-conflict walkthrough, which must not
+    # run inside the page's single shared script -- a conflicted `git merge`
+    # exits non-zero on purpose, which `set -euo pipefail` would treat as the
+    # page having broken. Captured as a real transcript once instead; same
+    # shape as the intentionally-failing `cd lab notebook` in 01-command-line.
+    "03-git": 11,
     # Text formats: everything is checkable with local tools.
     "04-file-formats": 2,
     # One block: the pixi install/add teaser, for the same reason as Part 2.

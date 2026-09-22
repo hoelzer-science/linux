@@ -312,18 +312,53 @@ things — line endings and encoding — that make a text file misbehave.
 
 # Before your first practical
 
+## Getting a terminal, cheapest first {.smaller}
+
+Reading the commands is not the same as running them, so the first job is
+somewhere to type. Any of these will do.
+
+| | |
+|---|---|
+| **Nothing to install** | [webvm.io](https://webvm.io) boots a real Debian Linux in a browser tab — no account, nothing downloaded. Enough for all of Part 1. |
+| **On a Mac** | You already have one: *Applications → Utilities → Terminal*. |
+| **On Windows** | Install **WSL2**: `wsl --install` in PowerShell as administrator, then reboot. It is a real Ubuntu, and everything here then applies to you unchanged. |
+| **Getting serious** | Install Linux on a machine of your own. Nothing here requires it; everything here is easier once you have. |
+
+The browser one forgets everything when you close the tab and is not the place
+to install software — so Part 2 onward wants one of the other three.
+
+::: {.notes}
+The point of the table is that nobody is blocked. The commonest reason someone
+arrives having read nothing is that step one was an install they did not have
+time for -- so the first row exists to remove that excuse entirely.
+
+WSL2 is still the right answer for a Windows user who will do this more than
+once: it is a real Ubuntu, and the alternative is software that has no Windows
+build at all.
+
+Worth saying out loud: some courses hand you a prepared machine, and if yours
+does, none of this is required of you.
+:::
+
 ## What to actually do this week
 
-- Open a terminal. **On Windows, install WSL2 first** — do it on a quiet
-  evening, not ten minutes before a session.
-- Work through **[Part 1](parts/01-command-line.qmd)** properly, and check
-  yourself against its list at the end.
+- **Get a terminal**, by whichever route above costs you least.
+- Work through **[Part 1](parts/01-command-line.qmd)** properly — *typing* the
+  commands — and check yourself against its list at the end.
 - Install **[VS Code](https://code.visualstudio.com)** — and on Windows, its
-  Remote – WSL extension.
+  **WSL** extension.
 - Come back to Parts 2–4 when you actually need them. Nobody expects them
   memorised in advance.
+
+If your course provides a prepared machine, none of the setup is required of
+you. The hour spent typing into a terminal of your own is still what makes the
+prepared one feel ordinary rather than magic.
 
 ::: {.notes}
 If presenting live, this is the slide to slow down on — it is the one with an
 action attached, unlike everything before it.
+
+The last paragraph is the one to say in your own words. A reader who has only
+ever been handed a working machine has no model of what it is doing, and that
+is exactly who gets stuck in week three.
 :::

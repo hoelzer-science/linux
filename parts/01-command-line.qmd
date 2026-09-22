@@ -79,6 +79,19 @@ and the fix is usually the short parameter. Not everything can be covered for
 every platform, and Linux is the one that is.
 :::
 
+**No installation at all** — if you only want to try the commands on this page
+before committing to anything, [webvm.io](https://webvm.io) boots a real Debian
+Linux in a browser tab, with nothing to install and no account. It is enough for
+everything in Part 1.
+
+::: {.callout-note}
+## What the browser one is not
+
+It forgets everything when you close the tab, and it is not the place to install
+software, so Part 2 onward wants one of the routes above. Treat it as a way to
+start this afternoon rather than as a machine.
+:::
+
 ## What you are looking at
 
 You will see something like this.
@@ -98,6 +111,26 @@ The `$` marks the end of the prompt. You never type it.
 
 On this page, code blocks show the command *without* a prompt, so you can copy
 them cleanly. Where output is shown, it is in a separate block.
+
+::: {.callout-important}
+## Pasting into a terminal takes an extra key
+
+<kbd>Ctrl</kbd>+<kbd>V</kbd> will not paste here.
+
+| | |
+|---|---|
+| paste *into* the terminal | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> |
+| copy *from* the terminal | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> |
+
+The reason is worth knowing rather than memorising.
+<kbd>Ctrl</kbd>+<kbd>C</kbd> in a terminal already means **stop the command that
+is running** — see *Getting unstuck* at the end of this page — and that meaning
+is a great deal older than the clipboard. Pressing it expecting *copy* is the
+quickest way to kill something you had been waiting for.
+
+On a Mac the ordinary <kbd>⌘</kbd>+<kbd>C</kbd> and <kbd>⌘</kbd>+<kbd>V</kbd>
+work, and the collision does not arise.
+:::
 
 # Where am I?
 
@@ -851,6 +884,7 @@ A short list that will save you more time than anything else on this page.
 | The screen is a mess | `clear` |
 | You typed a long command and want to fix the start | <kbd>Ctrl</kbd>+<kbd>A</kbd> jumps to the beginning |
 | You are not sure a name is spelled right | Do not guess — press <kbd>Tab</kbd> |
+| You pressed <kbd>Ctrl</kbd>+<kbd>C</kbd> to copy, and the command stopped | That is what it means here. Copy is <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd>, paste <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> |
 
 ## Reading an error message
 

@@ -655,8 +655,8 @@ This is a strong recommendation, not a neutral menu:
   alt-tabbing between a file and the command that reads it.
 - It handles the formats you will actually meet — Markdown, JSON, CSV, YAML,
   Python — with syntax highlighting that makes a malformed file *look* malformed.
-- Its **Remote — WSL** extension means Windows users edit Linux files natively,
-  with no copying back and forth. On Windows this is close to essential.
+- Its **WSL** extension means Windows users edit Linux files natively, with no
+  copying back and forth. On Windows this is close to essential.
 - It is free, and it is what a great deal of the field uses, so help is easy to
   find.
 
@@ -926,12 +926,13 @@ warn every single time they run.
 Check yourself against this list. If you can do all of it, you have what a first
 practical assumes.
 
-- [ ] Open a terminal, and on Windows have WSL2 working.
+- [ ] Open a terminal, by whichever route works for you — on Windows that means
+      WSL2, unless you are using the browser one.
 - [ ] Say where you are (`pwd`) and what is there (`ls`).
 - [ ] Move around with `cd`, including `..` and `~`.
 - [ ] Explain why there is no `C:` drive, and what `/` is.
 - [ ] Tell an absolute path from a relative one, and explain why it matters.
-- [ ] Have VS Code installed, and on Windows the Remote — WSL extension.
+- [ ] Have VS Code installed, and on Windows its WSL extension.
 - [ ] Make a directory, copy, rename and delete a file — carefully.
 - [ ] Read a command and name its parameters and arguments.
 - [ ] Read a command written across several lines with backslashes.

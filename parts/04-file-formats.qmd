@@ -3,26 +3,26 @@ title: "Part 4 — Files you will meet"
 subtitle: "Markdown, JSON, tables, and why text files misbehave"
 ---
 
-Most of what you handle is **plain text** — files a human can read and any
-program can parse. This part covers the ones that turn up everywhere, whatever
-subject you are working in.
+Most files that you work with are **plain text**: files that a person can read
+and any program can process. This part covers the formats that you will meet in
+every subject.
 
 ::: {.callout-note}
 ## This page grows
 
-These are the formats that come up first. Others get added as they earn a place;
-nothing here has to be complete to be useful.
+These are the formats that you will meet first. We add other formats when they
+become useful. The page does not need to be complete to be useful.
 :::
 
 # Plain text, and what "plain" means
 
-A plain text file contains characters and nothing else — no fonts, no colours,
-no hidden formatting. That is exactly why it lasts: a text file written thirty
-years ago still opens today, and every programming language can read one without
-a library.
+A plain text file contains characters and nothing else: no fonts, no colours,
+no hidden formatting. This is why it lasts. A text file from thirty years ago
+still opens today, and every programming language can read it without an extra
+library.
 
-A `.docx` or `.xlsx` is **not** plain text. It is a zip archive full of markup,
-which is why a program that expects text chokes on one.
+A `.docx` or `.xlsx` file is **not** plain text. It is a zip archive full of
+markup. This is why a program that expects text fails on it.
 
 ```bash
 printf "just some text\n" > plain.txt
@@ -33,15 +33,15 @@ cat plain.txt
 just some text
 ```
 
-The extension is a hint to *you*, not a fact about the file. `data.csv`,
-`data.txt` and `data` can hold identical bytes. Renaming a file does not convert
-it.
+The file extension is a hint for *you*. It does not define the file.
+`data.csv`, `data.txt` and `data` can contain exactly the same bytes. If you
+rename a file, you do not convert it.
 
 # Markdown
 
-**Markdown** (`.md`) is text with light formatting marks that stay readable as
-text. It is what READMEs, documentation and notes are written in, and it is what
-GitHub renders on a repository's front page.
+**Markdown** (`.md`) is text with a few simple formatting marks that are still
+easy to read as text. READMEs, documentation and notes are written in Markdown,
+and GitHub shows it formatted on the main page of a repository.
 
 ```bash
 cat > README.md <<'EOF'
@@ -67,7 +67,7 @@ head -n 3 README.md
 A short description of what this does.
 ```
 
-The whole syntax you need at first:
+This is all the syntax you need at the start:
 
 | you write | you get |
 |---|---|
@@ -80,8 +80,8 @@ The whole syntax you need at first:
 | `[label](target)` | a link |
 | `> quoted` | a quotation |
 
-Code spanning several lines goes in a fenced block, with the language named so
-it is highlighted:
+Code with several lines goes in a block between three backticks. Name the
+language, so that the code is highlighted:
 
 ````text
 ```python
@@ -92,26 +92,26 @@ print("hello")
 ::: {.callout-tip}
 ## Every repository should have a README.md
 
-It is the first thing anyone sees, including you in a year. Four things earn
-their space: what this is, what you need to run it, how to run it, and where the
-data lives. That is enough — a short README that exists beats a thorough one
-that does not.
+It is the first thing that anyone sees, including you in a year. It needs four
+things: what the project is, what you need to run it, how to run it, and where
+the data is. That is enough. A short README that exists is better than a long
+one that does not.
 :::
 
 ::: {.callout-note}
 ## Markdown is not one standard
 
-Different tools support slightly different extensions — tables, footnotes,
-task lists and strikethrough are common but not universal. GitHub's variant is
-the one you will meet most. If something renders on GitHub and not elsewhere,
-this is usually why, and it is not your mistake.
+Different tools support slightly different extensions. Tables, footnotes,
+task lists and strikethrough are common, but not every tool supports them. You
+will meet GitHub's version most often. If something looks right on GitHub but
+not in another tool, this is usually the reason, and it is not your mistake.
 :::
 
 # JSON
 
-**JSON** (`.json`) is how programs hand structured data to each other. Many
-tools write a JSON report alongside their human-readable output, and it is
-usually the easiest thing to pull numbers out of.
+Programs use **JSON** (`.json`) to pass structured data to each other. Many
+tools write a JSON report in addition to their output for people. It is usually
+the easiest file to get numbers from.
 
 ```bash
 cat > report.json <<'EOF'
@@ -130,23 +130,23 @@ EOF
 cat report.json
 ```
 
-Six types, and that is the whole language:
+JSON has six data types, and that is the whole language:
 
 | | |
 |---|---|
 | **string** | `"A1"` — always double quotes, never single |
 | **number** | `1420`, `0.97` — no quotes |
 | **boolean** | `true` / `false` — lowercase |
-| **null** | `null` — a value that is deliberately absent |
+| **null** | `null` — a value that is missing on purpose |
 | **array** | `[...]` — an ordered list |
 | **object** | `{...}` — named fields, like the whole file |
 
-Objects nest, which is how JSON represents structure: `source` above is an
-object inside an object.
+An object can contain other objects. This is how JSON shows structure: `source`
+above is an object inside an object.
 
 ## Reading it
 
-Python reads JSON without installing anything:
+Python reads JSON without any extra installation:
 
 ```bash
 python3 -c "
@@ -164,13 +164,13 @@ bench-2
 2 flags
 ```
 
-Note how nesting is read: `d['source']['instrument']` walks down one level at a
-time, exactly as the file is shaped.
+Note how you read nested values: `d['source']['instrument']` goes down one
+level at a time, in the same structure as the file.
 
 ## Checking whether a file is valid
 
-A JSON file is either well-formed or it is not, and one missing comma breaks the
-whole thing. Rather than squinting at it:
+A JSON file is either valid or not, and one missing comma makes the whole file
+invalid. Instead of searching for the error by eye, run:
 
 ```bash
 python3 -m json.tool report.json > /dev/null && echo "valid JSON"
@@ -180,8 +180,8 @@ python3 -m json.tool report.json > /dev/null && echo "valid JSON"
 valid JSON
 ```
 
-That also pretty-prints, so it is the quickest way to make an unreadable
-one-line file legible:
+This command also formats the file for reading. So it is the quickest way to
+make a long single-line file readable:
 
 ```bash
 printf '{"a":1,"b":[2,3]}' > tight.json
@@ -201,20 +201,20 @@ python3 -m json.tool tight.json
 ::: {.callout-warning}
 ## The three things that break JSON
 
-- **A trailing comma.** `[1, 2, 3,]` is invalid. Most languages allow it; JSON
-  does not.
+- **A comma after the last item.** `[1, 2, 3,]` is invalid. Most programming
+  languages allow it, but JSON does not.
 - **Single quotes.** `{'a': 1}` is not JSON, it is Python. JSON needs `"a"`.
-- **Comments.** There is no way to write one. A `#` or `//` line makes the file
+- **Comments.** JSON has no comments. A line with `#` or `//` makes the file
   invalid.
 
-All three produce a parse error naming a line number that is often *after* the
-real mistake, because that is where the parser finally gave up.
+All three cause an error message with a line number. This line number is often
+*after* the real mistake, because the program stops reading only there.
 :::
 
 # Tables: CSV and TSV
 
-Tabular data usually arrives as one row per line, with columns separated by a
-delimiter — a comma (**CSV**) or a tab (**TSV**).
+Tables usually come as one row per line, with the columns separated by a
+character: a comma (**CSV**) or a tab (**TSV**).
 
 ```bash
 cat > samples.csv <<'EOF'
@@ -233,7 +233,7 @@ A2  control  0.51
 B1  treated  0.88
 ```
 
-The Part 1 tools work directly on these:
+The tools from Part 1 work directly on these files:
 
 ```bash
 wc -l samples.csv
@@ -247,7 +247,7 @@ id,group,value
 B1,treated,0.88
 ```
 
-`cut` picks out columns:
+`cut` selects columns:
 
 ```bash
 cut -d, -f2 samples.csv | sort | uniq -c
@@ -259,45 +259,48 @@ cut -d, -f2 samples.csv | sort | uniq -c
       1 treated
 ```
 
-`-d,` sets the delimiter and `-f2` picks field 2. Note the header got counted
-too — a reminder that these tools see lines, not tables, and know nothing about
-headers.
+`-d,` sets the separator, and `-f2` selects field 2. Note that the header was
+counted too. These tools see lines, not tables, and they do not know what a
+header is.
 
 ::: {.callout-warning}
 ## Prefer TSV when you get the choice
 
-Real data contains commas — in names, in descriptions, in anything free-text.
-CSV handles this by quoting the field, and then `cut -d,` gets it wrong, because
-`cut` does not understand quoting.
+Real data contains commas: in names, in descriptions, in any free text. CSV
+puts such a field in quotes. Then `cut -d,` gives a wrong result, because `cut`
+does not understand quotes.
 
-Tabs almost never appear inside a value, so TSV avoids the problem rather than
-managing it.
+Tabs almost never appear inside a value. So TSV avoids the problem
+completely.
 :::
 
 ::: {.callout-important}
-## Never open data in Excel "just to look"
+## Never open data in Excel "only to look at it"
 
-Excel silently changes things and saving makes the changes permanent:
+Excel changes data without telling you, and when you save, the changes become
+permanent:
 
-- text that resembles a date becomes one, irreversibly
-- leading zeros are stripped, so `007` becomes `7`
+- text that looks like a date becomes a date, and you cannot undo it
+- zeros at the start are removed, so `007` becomes `7`
 - long identifiers become scientific notation
-- the delimiter and encoding may change on save
+- the separator and the encoding can change when you save
 
-This is a well-documented, recurring problem in real published datasets, not a
-hypothetical. Use `head`, `less`, or VS Code.
+This problem is well documented, and it happens again and again in real
+published datasets. Use `head`, `less` or VS Code instead.
 :::
 
 # Two things that break text files
 
-Both are invisible on screen, which is what makes them worth knowing.
+You cannot see either of them on the screen. This is why you should know
+them.
 
 ## Line endings
 
-Windows ends a line with two characters (`\r\n`); Linux and macOS use one
-(`\n`). A file written on Windows and read on Linux can therefore carry a
-trailing `\r` on every line — invisible, but it makes `"control"` and
-`"control\r"` different strings, and comparisons silently fail.
+Windows ends a line with two characters (`\r\n`). Linux and macOS use one
+(`\n`). So a file written on Windows and read on Linux can have an extra `\r`
+at the end of every line. You cannot see it, but it makes `"control"` and
+`"control\r"` different strings, and comparisons fail without an error
+message.
 
 ```bash
 printf 'value\r\n' > windows.txt
@@ -308,7 +311,8 @@ cat -e windows.txt
 value^M$
 ```
 
-`cat -e` makes it visible: `^M` is the carriage return, `$` the line end. To fix:
+`cat -e` makes it visible: `^M` is the carriage return, and `$` is the end of
+the line. To fix it:
 
 ```bash
 tr -d '\r' < windows.txt > fixed.txt
@@ -320,28 +324,30 @@ value$
 ```
 
 ::: {.callout-tip}
-VS Code shows `LF` or `CRLF` in its status bar, and clicking it converts the
-file. This is a good reason to have it open when a file is behaving strangely.
+VS Code shows `LF` or `CRLF` in its status bar, and a click on it converts the
+file. So open a strange file in VS Code first.
 :::
 
 ## Encoding
 
-Text is stored as bytes, and an **encoding** maps bytes to characters. **UTF-8**
-is the answer everywhere now, and it handles every language and symbol.
+Text is stored as bytes, and an **encoding** defines which bytes mean which
+characters. Today, **UTF-8** is used everywhere, and it covers every language
+and symbol.
 
-You meet this when a name with an umlaut or an accent arrives as `Ã¼` or `?` —
-the file was written in one encoding and read as another. Save as UTF-8 and the
-problem disappears.
+You meet this problem when a name with an umlaut or an accent appears as `Ã¼`
+or `?`. The file was written in one encoding and read in another. Save the file
+as UTF-8, and the problem disappears.
 
 ::: {.callout-tip}
 ## The safest habit
 
-Stick to plain ASCII in **file names, column headers and identifiers** — letters,
-digits, underscores, hyphens. Umlauts, spaces and accents in a filename are legal
-and will eventually break a tool that was not tested with them.
+Use only plain ASCII in **file names, column headers and identifiers**:
+letters, digits, underscores and hyphens. Umlauts, spaces and accents in a file
+name are allowed, but sooner or later they break a tool that was not tested
+with them.
 
-Use whatever you like inside the *contents* of a document. It is the names that
-travel between programs.
+Inside the *content* of a document, use any characters you like. The names are
+what programs pass to each other.
 :::
 
 # What you should be able to do now
@@ -356,9 +362,9 @@ travel between programs.
 
 # Where to go next
 
-That is the material. If you can do the checklists at the end of all four parts,
-you have the working baseline a computational practical assumes — and rather
-more than most people start with.
+This is the end of the material. If you can do everything on the checklists
+at the end of all four parts, you have the basics that a computational practical
+assumes, and more than most people have at the start.
 
-Everything here is worth returning to rather than memorising. That is what a
+Do not memorise this material. Come back to it when you need it: that is what a
 reference is for.

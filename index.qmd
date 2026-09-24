@@ -2,73 +2,75 @@
 title: "Linux Crash Course"
 ---
 
-The command line, package management and Git — the working baseline for
+The command line, package management and Git: the basics you need for
 computational practicals.
 
-This is a **reference**, not a lecture. It is written to be scrolled, searched
-and copied from while you are actually sitting at a terminal, and to be worked
-through before a practical rather than during one.
+This is a **reference**, not a lecture. Use it at a terminal: scroll through it,
+search it and copy from it. Work through it before a practical, not during one.
 
 ## Start here
 
 | | |
 |---|---|
-| **[Kickoff slides](slides.qmd)** | A fast tour of all four parts, in about fifteen minutes |
+| **[Kickoff slides](slides.qmd)** | A short tour of all four parts, in about fifteen minutes |
 | **[Part 1 — The command line](parts/01-command-line.qmd)** | Terminal, paths, commands, pipes, wildcards |
 | **[Part 2 — Installing and managing tools](parts/02-packages.qmd)** | pixi, and the conda/mamba world you will meet anyway |
 | **[Part 3 — Git and GitHub](parts/03-git.qmd)** | Keeping your work, and getting it back |
 | **[Part 4 — Files you will meet](parts/04-file-formats.qmd)** | Markdown, JSON, tables, and why text files misbehave |
 
-The slides are a map, not the material — click through them first if you want
-the shape of the whole thing before reading Part 1 properly.
+The slides are an overview, not the material itself. If you want to see the
+whole structure first, click through them before you read Part 1.
 
 ::: {.callout-note}
 ## You do not need to finish everything first
 
-**Part 1 is the part that gates a practical.** If you can open a terminal, say
-where you are in the filesystem, read a command with its parameters, and send
-output from one command into another, you have enough to start.
+**You need Part 1 before your first practical.** If you can open a terminal,
+say where you are in the file system, read a command with its parameters, and
+send the output of one command into another, you know enough to start.
 
-The rest matters as you meet it — Part 2 when you install your own tools, Part 3
-when you have work worth keeping, Part 4 whenever a file misbehaves.
+The other parts become important when you need them: Part 2 when you install
+your own tools, Part 3 when you have work that you want to keep, and Part 4 when
+a file causes errors.
 :::
 
 ## Who this is for
 
-Anyone about to do computational work who has not used a command line before.
-It assumes **no prior experience** — not with Linux, not with a terminal, not
-with programming.
+It is for anyone who will do computational work and has not used a command
+line before. It assumes **no prior experience**: not with Linux, not with a
+terminal, and not with programming.
 
-It deliberately belongs to no single course. Several modules link to it, so the
-examples here are ordinary files and folders rather than data from any one
-subject. You will meet the real data in the practical; this is about the tools
-you will meet it with.
+It does not belong to one course. Several modules link to it, so the examples
+use ordinary files and folders, not data from one subject. You will work with
+the real data in your practical. This material is about the tools that you will
+use for it.
 
 ## Why a terminal at all
 
-A fair question, and worth answering before you spend an evening on it.
+This is a fair question. Here are three reasons, before you spend an evening
+on this material.
 
-- **The tools only exist there.** Most scientific software has no graphical
-  interface. This is not an oversight — a program that runs from the command
-  line can be run a thousand times by another program, and one that needs a
-  human to click cannot.
-- **It is a record.** A command you typed can be pasted into a methods section,
-  re-run next year, and checked by someone else. A sequence of clicks cannot be.
-- **It scales without changing.** The command that processes one file processes
-  four hundred with the same typing.
+- **Many tools exist only there.** Most scientific software has no graphical
+  interface. This is not a mistake: another program can run a command-line
+  program a thousand times, but it cannot run a program that needs a person to
+  click.
+- **It is a record.** You can copy a command that you typed into the methods
+  section of a report, run it again next year, and someone else can check it.
+  You cannot do this with a series of clicks.
+- **It works the same for many files.** The command that processes one file can
+  process four hundred files, with the same amount of typing.
 
-The cost is that nothing is discoverable. A graphical program shows you what it
-can do; a terminal shows you a blinking cursor and waits. That is the gap this
-material closes.
+The disadvantage is that a terminal does not show you what it can do. A
+graphical program shows its functions; a terminal shows a blinking cursor and
+waits. This material teaches you what to type.
 
 ## How to use it
 
-Type the commands. Do not copy-paste them, at least not at first — the typing
-is doing more work than it looks like, because the errors you make while typing
-are the ones you will make later under time pressure, and meeting them now with
-nothing at stake is the cheapest possible time to meet them.
+Type the commands. Do not copy and paste them, at least not at the start.
+Typing teaches you more than it seems to. The errors that you make while typing
+now are the errors you would otherwise make later, under time pressure. Now
+they cost you nothing.
 
-Every command shown here is **executed automatically** whenever this site is
-built, in a clean scratch directory, on Linux. If an example is on this page, it
-ran. That does not mean it will do the same thing on your machine — versions and
-defaults differ — but it does mean it is not a typo.
+Every command on these pages **runs automatically** each time this site is
+built, in an empty directory, on Linux. If an example is on a page, it ran
+without an error. It may still behave differently on your computer, because
+versions and default settings differ. But it contains no typo.

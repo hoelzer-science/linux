@@ -3,15 +3,15 @@ title: "Part 3 — Git and GitHub"
 subtitle: "Keeping your work, and getting it back"
 ---
 
-Git answers a question you will have at some point: *what did this look like
-before I broke it?*
+Git answers a question that you will ask at some point: *what did this look
+like before I broke it?*
 
 ::: {.callout-tip}
 ## Most of this page is executed
 
-Everything up to the GitHub section runs on a real repository each time this
-site is built. Git works entirely on your own machine — the network is only
-involved when you deliberately talk to a server.
+Each time this site is built, everything before the GitHub section runs on a
+real repository. Git works completely on your own computer. It uses the
+internet only when you connect to a server.
 :::
 
 # The problem
@@ -19,35 +19,36 @@ involved when you deliberately talk to a server.
 You have `analysis.py`. You change it. It stops working, and you cannot remember
 what you changed.
 
-The usual response is `analysis_v2.py`, then `analysis_final.py`, then
-`analysis_final_REALLY.py` — and a folder where nobody can tell which file
-produced which result.
+Many people then create `analysis_v2.py`, then `analysis_final.py`, then
+`analysis_final_REALLY.py`. The result is a folder where nobody can tell which
+file produced which result.
 
-Git replaces all of that with one directory that remembers **every version of
-everything in it**, plus who changed what, when, and why.
+Git replaces all of this with one directory that remembers **every version of
+every file in it**, and who changed what, when, and why.
 
 # Setting up
 
-Git records a name and an email with every change, so tell it who you are once:
+Git saves a name and an email address with every change. So tell Git once who
+you are:
 
 ```bash
 git config --global user.name "Your Name"
 git config --global user.email "you@example.org"
 ```
 
-`--global` means "for every repository on this machine", so this is a one-time
-step.
+`--global` means "for every repository on this computer", so you do this only
+once.
 
 ```bash
 git config --global init.defaultBranch main
 ```
 
-That sets what the first branch is called. `main` is the current convention.
+This sets the name of the first branch. `main` is the usual name today.
 
 # A repository
 
-A **repository** (dt. *Repositorium*, usually just *repo*) is a directory that
-Git is watching. Make one:
+A **repository** (dt. *Repositorium*, usually only *repo*) is a directory that
+Git watches. Create one:
 
 ```bash
 mkdir myanalysis
@@ -59,22 +60,23 @@ git init
 Initialized empty Git repository in /home/user1/myanalysis/.git/
 ```
 
-That created a hidden `.git` directory. **That directory is the repository** —
-the entire history lives there. Delete it and you have ordinary files again.
+This created a hidden `.git` directory. **This directory is the repository**:
+the whole history is stored there. If you delete it, you have ordinary files
+again.
 
-Now make something worth tracking:
+Now create a file for Git to track:
 
 ```bash
 echo "print('hello')" > analysis.py
 git status
 ```
 
-Git reports `analysis.py` as **untracked**: it can see the file but is not
-watching it yet.
+Git reports `analysis.py` as **untracked**: Git can see the file, but does not
+watch it yet.
 
 # The three steps
 
-Saving work in Git is deliberately three steps, not one.
+In Git, saving your work has three steps, not one. This is intended.
 
 ```bash
 git add analysis.py
@@ -92,17 +94,18 @@ git commit -m "Add the analysis script"
 | `git add` | choose what goes into the next snapshot ("staging") |
 | `git commit` | take the snapshot, with a message saying why |
 
-The middle step looks like bureaucracy and is not: it lets you commit *some* of
-your changes and leave the rest. Two unrelated fixes become two commits with two
-clear messages, instead of one commit called "stuff".
+The middle step looks unnecessary, but it is useful: you can commit *some* of
+your changes and leave the rest for later. So two unrelated fixes become two
+commits with two clear messages, not one commit called "stuff".
 
 ::: {.callout-tip}
 ## Write the message for the person reading it later
 
-That person is you, in six months, trying to find where something broke.
+That person is you, in six months, when you try to find where something broke.
 
-"Fix bug" is worthless. "Fix the off-by-one that dropped the last row" is worth
-the extra ten seconds. Say **why**, not what — the diff already shows what.
+"Fix bug" tells the reader nothing. "Fix the off-by-one error that dropped the
+last row" takes ten seconds more, and it helps. Say **why**, not what: the diff
+already shows what changed.
 :::
 
 ## Seeing what happened
@@ -116,7 +119,7 @@ git status --short
  M analysis.py
 ```
 
-`M` for modified. To see the actual change:
+`M` means modified. To see the change itself:
 
 ```bash
 git diff
@@ -128,7 +131,7 @@ git diff
 +print('goodbye')
 ```
 
-Lines with `+` were added, `-` removed. Commit it:
+Lines with `+` were added, and lines with `-` were removed. Commit the change:
 
 ```bash
 git add analysis.py
@@ -141,16 +144,17 @@ git log --oneline
 9c1f2ab Add the analysis script
 ```
 
-That list is the point of the whole exercise.
+This list of versions is the reason to use Git.
 
 ::: {.callout-important}
 ## Do not commit data
 
-Git is built for text — code, scripts, notes, configuration. It is bad at large
-binary files: it keeps every version forever, so a 2 GB dataset committed once
-is in the repository permanently, even after you delete it.
+Git is built for text: code, scripts, notes, configuration. It does not work
+well with large binary files. Git keeps every version forever, so if you commit
+a 2 GB dataset once, it stays in the repository permanently, even after you
+delete it.
 
-Keep data outside the repository, or list it in a `.gitignore`:
+Keep data outside the repository, or list it in a file called `.gitignore`:
 
 ```bash
 printf "results/\n*.csv\n" > .gitignore
@@ -158,14 +162,15 @@ git add .gitignore
 git commit -m "Ignore results and data files"
 ```
 
-Now Git stops offering to track them. **What belongs in a repository is
-everything needed to *reproduce* the results** — including `pixi.toml` and
-`pixi.lock` from Part 2 — not the results themselves.
+Now Git no longer offers to track these files. **A repository should contain
+everything that is needed to *reproduce* the results** — including `pixi.toml`
+and `pixi.lock` from Part 2 — but not the results themselves.
 :::
 
 # Going back
 
-The reason for all of it. Discard changes you have not committed:
+This is the reason for everything above. To discard changes that you have not
+committed:
 
 ```bash
 echo "print('a terrible mistake')" >> analysis.py
@@ -173,10 +178,10 @@ git restore analysis.py
 git diff
 ```
 
-`git diff` prints nothing: the file is back to its last committed state, and the
-mistake is gone.
+`git diff` prints nothing: the file is back in its last committed state, and
+the mistake is gone.
 
-Look at an old version without changing anything:
+To look at an old version without changing anything:
 
 ```bash
 git show HEAD~1:analysis.py
@@ -186,13 +191,13 @@ git show HEAD~1:analysis.py
 print('hello')
 ```
 
-`HEAD` is where you are now; `HEAD~1` is one commit before it. Nothing was
-modified — Git just read an old version out of its history.
+`HEAD` is where you are now, and `HEAD~1` is one commit before it. Nothing was
+changed: Git only read an old version from its history.
 
 # Branches
 
-A **branch** is a separate line of work. Try something risky without touching
-what already works:
+A **branch** is a separate line of work. On a branch, you can try something
+risky without changing what already works:
 
 ```bash
 git switch -c experiment
@@ -201,7 +206,7 @@ git add analysis.py
 git commit -m "Try a new idea"
 ```
 
-`-c` creates the branch and moves you onto it. To see what branches exist, and
+`-c` creates the branch and moves you to it. To see which branches exist, and
 which one you are on:
 
 ```bash
@@ -213,8 +218,8 @@ git branch
 * main
 ```
 
-The `*` marks where you are. `git status` says the same thing in its first line,
-which is why it is worth reading before anything else.
+The `*` marks where you are. The first line of `git status` says the same. This
+is why you should read `git status` before you do anything else.
 
 Switch back:
 
@@ -228,7 +233,8 @@ print('hello')
 print('goodbye')
 ```
 
-The new idea is not here — it is on `experiment`, intact. Keep it:
+The new idea is not here. It is on the branch `experiment`, unchanged. To keep
+it:
 
 ```bash
 git merge experiment
@@ -241,7 +247,7 @@ print('goodbye')
 print('a new idea')
 ```
 
-Or abandon it, by simply never merging.
+Or, to drop it, do not merge it.
 
 ```bash
 git log --oneline --graph --all
@@ -250,17 +256,16 @@ git log --oneline --graph --all
 ## Merge conflicts
 
 If the same lines changed on both branches, Git cannot decide which version you
-want, and says so. This is not a rare edge case — it is one of the first things
-a beginner hits, especially in a small team where two people edit the same file
-in the same week.
+want, and it tells you so. This is not rare. Beginners meet it early, especially
+in a small team where two people edit the same file in the same week.
 
 ::: {.callout-note}
 ## These commands are not executed automatically
 
-A conflict needs two branches that genuinely disagree, on purpose, which is not
-something a build script should manufacture on every run. So this walkthrough
-is written out rather than run — but every command and every line of output
-below is a real transcript, captured by running these exact commands once.
+A conflict needs two branches that disagree on purpose. A build script should
+not create that on every run. So this example is shown, but not run
+automatically. Every command and every line of output below is real: we ran
+these exact commands once and copied the result.
 :::
 
 Two branches, each changing the same line differently:
@@ -289,7 +294,7 @@ CONFLICT (content): Merge conflict in analysis.py
 Automatic merge failed; fix conflicts and then commit the result.
 ```
 
-Git could not decide, so it stopped and left both versions in the file:
+Git could not decide, so it stopped and put both versions in the file:
 
 ```{.bash .no-run}
 cat analysis.py
@@ -305,13 +310,14 @@ print('goodbye')
 print('a new idea')
 ```
 
-Everything above `=======` is your current branch (`HEAD`); everything below is
-the branch you are merging in, named after the marker. Only the lines that
-actually disagree are wrapped like this — the rest of the file is untouched.
+Everything above `=======` comes from your current branch (`HEAD`). Everything
+below it comes from the branch that you are merging, and the marker line names
+that branch. Only the lines that disagree are marked like this. The rest of the
+file is unchanged.
 
-Edit the file so it says what you actually want, and delete all three marker
-lines. `<<<<<<<`, `=======` and `>>>>>>>` are not part of the file — Git put
-them there only to show you the disagreement:
+Edit the file so that it says what you want, and delete all three marker lines.
+`<<<<<<<`, `=======` and `>>>>>>>` are not part of your file: Git added them
+only to show you the conflict:
 
 ```{.bash .no-run}
 printf "print('hey there')\nprint('goodbye')\nprint('a new idea')\n" > analysis.py
@@ -319,43 +325,43 @@ git add analysis.py
 git commit -m "Resolve the greeting conflict"
 ```
 
-That is all a conflict is: Git declining to guess, and you telling it what you
-actually meant. `git add` marks the file resolved, and `git commit` finishes the
-merge — the same two steps as any other change. It is not a sign anything is
-broken.
+This is all that a conflict is: Git does not guess, and you tell it what you
+meant. `git add` marks the file as resolved, and `git commit` finishes the
+merge. These are the same two steps as for any other change. A conflict does
+not mean that anything is broken.
 
 ::: {.callout-tip}
 ## `git status` orients you mid-conflict too
 
-If you get lost partway through, `git status` names the conflicted file and
-reminds you what to do next. Reading it is always the right first move here,
-same as everywhere else in Git.
+If you get lost during a conflict, `git status` names the file with the
+conflict and tells you what to do next. Here, as everywhere in Git, read
+`git status` first.
 :::
 
 # GitHub
 
-Everything so far was local. **GitHub** is a website that hosts Git
-repositories, so you can back them up, work from more than one machine, and let
-other people see your work. It is not Git — it is one of several hosts, alongside
-GitLab and others.
+Everything so far happened on your own computer. **GitHub** is a website that
+stores Git repositories. With it, you can keep a backup, work on more than one
+computer, and show your work to other people. GitHub is not Git. It is one of
+several such websites; GitLab is another one.
 
 ::: {.callout-important}
 ## You will need an account
 
-If your practical works out of a shared repository, at least one person on the
-team needs a GitHub account for that repository to exist at all. In practice
-everyone ends up with one — each of you will push your own commits, and a
-commit's author is tied to the account that made it.
+If your practical uses a shared repository, at least one person in the team
+needs a GitHub account, so that the repository can exist. In practice everyone
+needs one: each of you pushes your own commits, and every commit is linked to
+the account that made it.
 
-It costs nothing and takes a minute: [github.com/join](https://github.com/join).
-Do this before you need it, not in the middle of a session. See also
-*"Make a GitHub profile, and treat it as one"* below — this is not only a
-practical requirement.
+An account is free, and you can create one in a minute:
+[github.com/join](https://github.com/join). Do this before you need it, not
+during a session. See also *"Make a GitHub profile, and treat it as one"*
+below: an account is more than a requirement for the practical.
 :::
 
-@fig-git-stages places everything on this page on one picture, and adds the
-piece GitHub is for: a **remote repository**, a copy of the same history sitting
-on a server rather than on your machine.
+@fig-git-stages shows everything on this page in one picture. It also adds the
+part that GitHub is for: a **remote repository**, which is a copy of the same
+history on a server instead of on your computer.
 
 ![The four stages a change passes through, and the command that moves it from
 one to the next.](../figures/git-stages.svg){#fig-git-stages
@@ -365,48 +371,49 @@ to Local repository via git commit, and Local repository to Remote repository
 via git push. A dashed arrow labelled git pull or git clone runs from Remote
 repository back to Workspace."}
 
-`git push` and `git pull` are the two new commands — send your local history to
-the remote, or fetch what changed there. `git clone` is `git pull`'s
-first-time counterpart: instead of updating an existing local repository, it
-creates one from scratch by copying a remote's entire history.
+`git push` and `git pull` are the two new commands. `git push` sends your local
+history to the remote repository. `git pull` gets what changed there. `git
+clone` is what you use the first time, instead of `git pull`: it does not update
+an existing local repository, but creates a new one by copying the whole history
+of the remote repository.
 
 ::: {.callout-note}
 ## The commands below are not executed
 
-Unlike the rest of this page, these need an account, credentials and a real
-server, so they are written out rather than run.
+Unlike the rest of this page, these commands need an account, a login and a
+real server. So they are shown, but not run automatically.
 :::
 
-Make an empty repository on GitHub through the website, then connect your local
-one to it:
+Create an empty repository on the GitHub website. Then connect your local
+repository to it:
 
 ```{.bash .no-run}
 git remote add origin https://github.com/yourname/myanalysis.git
 git push -u origin main
 ```
 
-`origin` is the conventional name for "the server this came from". After the
-first push, sending later commits is one word:
+`origin` is the usual name for "the server that this repository came from".
+After the first push, one word sends later commits:
 
 ```{.bash .no-run}
 git push
 ```
 
-And to collect changes made elsewhere:
+To get changes that were made somewhere else:
 
 ```{.bash .no-run}
 git pull
 ```
 
-Starting from someone else's repository instead:
+To start from someone else's repository instead:
 
 ```{.bash .no-run}
 git clone https://github.com/someone/theirproject.git
 cd theirproject
 ```
 
-`clone` copies the entire history, not just the current files — so you get every
-version and can work offline immediately.
+`clone` copies the whole history, not only the current files. So you get every
+version, and you can work without the internet immediately.
 
 ## The everyday loop
 
@@ -420,22 +427,22 @@ git push                          # send it back
 
 # Working in a shared repository
 
-If several of you share one repository and all commit to `main`, you will hit
-this within the first hour:
+If several people share one repository and all commit to `main`, you will see
+this in the first hour:
 
 ```text
  ! [rejected]        main -> main (fetch first)
 ```
 
 Someone else pushed while you were working. Nothing is broken and nothing is
-lost — Git is refusing to overwrite their work with yours. `git pull`, sort out
-anything that conflicts — a `git pull` conflict looks and resolves exactly like
-the [merge conflict](#merge-conflicts) above, `pull` is just `fetch` plus
-`merge` — then push again.
+lost: Git refuses to overwrite their work with yours. Run `git pull`, resolve
+any conflicts, then push again. A conflict after `git pull` looks the same as
+the [merge conflict](#merge-conflicts) above, and you resolve it in the same
+way, because `pull` is only `fetch` plus `merge`.
 
-That works, but it gets tiring, and it means every half-finished change lands
-straight on the branch everyone else is using. The usual answer is the one from
-the previous section: **work on a branch, and merge it when it is ready.**
+This works, but it becomes tiring. And every unfinished change goes directly
+onto the branch that everyone else uses. The usual solution is the one from the
+section on branches: **work on a branch, and merge it when it is ready.**
 
 ## Branch, push, pull request
 
@@ -443,114 +450,114 @@ the previous section: **work on a branch, and merge it when it is ready.**
 git switch -c add-quality-filter
 ```
 
-Do the work, commit it as usual, then push **the branch** rather than `main`:
+Do the work and commit it as usual. Then push **the branch**, not `main`:
 
 ```{.bash .no-run}
 git push -u origin add-quality-filter
 ```
 
-`-u` links your local branch to the one on the server, so afterwards plain
-`git push` is enough.
+`-u` links your local branch to the branch on the server. After that,
+`git push` alone is enough.
 
-Then open a **pull request** (PR) on GitHub. Despite the name, nothing is being
-pulled by you: a PR is a request that *your* branch be merged into `main`, with
-a place to discuss it first.
+Then open a **pull request** (PR) on GitHub. The name is confusing: you do not
+pull anything. A PR asks for *your* branch to be merged into `main`, and it
+gives the team a place to discuss the change first.
 
 ::: {.callout-note}
 ## This part is done in the browser
 
 After you push a branch, GitHub shows a **Compare & pull request** button on the
-repository's front page. From there: check that the base branch is `main` and
-the compare branch is yours, give it a title and a sentence saying what it does,
-and create it.
+main page of the repository. Click it. Check that the base branch is `main` and
+the compare branch is yours. Give the PR a title and one sentence that says what
+it does, and create it.
 
-Anyone on the team can then read the change, comment on specific lines, and
-click **Merge pull request** when it is agreed. Afterwards, back in your
-terminal:
+Everyone in the team can then read the change and comment on single lines. When
+the team agrees, someone clicks **Merge pull request**. After that, go back to
+your terminal and run:
 
 ```{.bash .no-run}
 git switch main
 git pull
 ```
 
-so your local `main` catches up with what was just merged.
+so that your local `main` also contains the merged change.
 :::
 
 ::: {.callout-warning}
 ## The exact buttons move
 
-GitHub redesigns its interface regularly, so the names and positions above are
-what to look for rather than a guaranteed click path. The underlying steps do
-not change: push a branch, open a request to merge it, agree, merge.
+GitHub changes its website often. So the names and positions above tell you
+what to look for; they may not be exactly where you click. The steps do not
+change: push a branch, open a request to merge it, agree, merge.
 :::
 
-## Why bother, for a small team
+## Why use branches in a small team
 
-Three reasons that hold even for two people:
+There are three reasons, and they are true even for two people:
 
-- **`main` always works.** Half-finished work sits on a branch, so nobody else
-  inherits it.
-- **Somebody read it.** A PR is the natural place for a second pair of eyes,
-  which catches more than any tool.
-- **It records the reasoning.** The discussion stays attached to the change, so
-  in six months the repository answers *why*, not just *what*.
+- **`main` always works.** Unfinished work stays on a branch, so nobody else
+  gets it.
+- **Someone reads the change.** In a PR, a second person checks the change, and
+  a person finds more errors than any tool.
+- **It records the reasons.** The discussion stays linked to the change. So in
+  six months, the repository answers *why*, not only *what*.
 
 ::: {.callout-tip}
-## Small pull requests get reviewed; large ones get approved
+## Keep pull requests small
 
-A PR touching one thing gets read properly. A PR touching nineteen things gets a
-thumbs-up and no attention, which defeats the point. Merge more often rather
-than less.
+People read a PR that changes one thing carefully. A PR that changes nineteen
+things gets approved without real attention, and then the review is useless.
+So merge often, in small steps.
 :::
 
 ::: {.callout-tip}
 ## Make a GitHub profile, and treat it as one
 
-It costs nothing and it accumulates. A practical you did properly — a repository
-with a clear README, code that runs, and an environment file that lets someone
-reproduce it — is a genuine example of your work, and it will be the first thing
-in a portfolio you did not realise you were building.
+It is free, and it grows over time. A practical that you did well — a
+repository with a clear README, code that runs, and an environment file that
+lets someone reproduce it — is a real example of your work. It can be the first
+item in your portfolio.
 
-That is a much better reason to write decent commit messages than being told to.
+This is a much better reason to write good commit messages than an instruction
+from a teacher.
 
-**This is worth taking seriously, not just as a habit.** A GitHub profile can
-become a genuine landing page — pinned repositories, a short bio, links to
-papers or projects, even its own page at `username.github.io`. One example
-worth looking at:
-[github.com/jonas-fuchs](https://github.com/jonas-fuchs), a working
-bioinformatician's profile built exactly this way. For a job application in
-this field, a profile like that can say more than a CV — it is evidence you
-can actually do the work, not a claim that you can.
+**Take this seriously.** A GitHub profile can become your personal web page:
+pinned repositories, a short biography, links to papers or projects, and even
+its own website at `username.github.io`. Here is one good example:
+[github.com/jonas-fuchs](https://github.com/jonas-fuchs), the profile of a
+bioinformatician, built in this way. When you apply for a job in this field,
+such a profile can say more than a CV. It shows that you can do the work,
+instead of only claiming it.
 
-None of this needs to happen this semester. It needs to *start* this semester,
-because a profile with one good repository on it beats one with none, and the
-gap only closes by adding to it.
+You do not need to finish this during one semester. But *start* this semester:
+a profile with one good repository is better than a profile with none, and it
+only improves when you add to it.
 :::
 
 # When it goes wrong
 
 **"Please tell me who you are."** You skipped the `git config` step above.
 
-**You committed something you should not have.** If you have not pushed,
+**You committed something by mistake.** If you have not pushed it,
 `git reset --soft HEAD~1` undoes the commit and keeps the changes. If you *have*
-pushed — especially a password or a key — treat it as public: the fix is to
-change the secret, not to rewrite history. Removing a commit from a public
-repository does not remove it from everyone who already has a copy.
+pushed it — especially a password or a key — treat it as public. The fix is to
+change the password or key, not to change the history. If you remove a commit
+from a public repository, everyone who already has a copy still has it.
 
-**`git push` is rejected.** Someone else pushed first. `git pull`, resolve
-anything that conflicts, then push again.
+**`git push` is rejected.** Someone else pushed first. Run `git pull`, resolve
+any conflicts, then push again.
 
-**You are lost.** `git status` almost always tells you where you are and what it
-thinks you should do next. Read it before doing anything drastic.
+**You are lost.** `git status` almost always tells you where you are and what you
+should do next. Read it before you do anything that you cannot undo.
 
 ::: {.callout-warning}
 ## Be careful with advice from the internet
 
-Searching a Git error reliably turns up `git reset --hard` and `git push
---force`. Both can destroy work permanently, and both are usually the wrong
-answer to a beginner's problem.
+If you search the internet for a Git error, you will almost always find
+`git reset --hard` and `git push --force`. Both can delete work permanently,
+and both are usually the wrong answer to a beginner's problem.
 
-`git status` and `git log` never destroy anything. Start there.
+`git status` and `git log` never delete anything. Start with them.
 :::
 
 # What you should be able to do now
@@ -560,7 +567,7 @@ answer to a beginner's problem.
 - [ ] Configure your name and email.
 - [ ] Make a repository and commit a file to it.
 - [ ] Say what `add` does that `commit` does not.
-- [ ] Write a commit message worth reading.
+- [ ] Write a commit message that helps the reader.
 - [ ] See what changed with `git status`, `git diff` and `git log`.
 - [ ] Recover a file you broke but had not committed.
 - [ ] Say why data does not belong in a repository, and what does.
@@ -573,5 +580,5 @@ answer to a beginner's problem.
 # Where to go next
 
 **[Part 4 — Files you will meet](04-file-formats.qmd)** covers the formats that
-turn up around all of this: Markdown for the README your repository should have,
-JSON for what tools hand back, and the tabular formats in between.
+you will meet together with Git: Markdown for the README of your repository,
+JSON for the output of tools, and table formats.

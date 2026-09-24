@@ -37,16 +37,16 @@ shown on a slide is a command that ran.
 
 ## Before you start clicking through {.smaller}
 
-This is a **map**, not the material. Four written parts carry the actual
-depth — worked examples, the exceptions, what breaks and why:
+This deck is an **overview**, not the material. The four written parts have
+the details: worked examples, the exceptions, what breaks and why:
 
 - [Part 1 — The command line](parts/01-command-line.qmd)
 - [Part 2 — Installing and managing tools](parts/02-packages.qmd)
 - [Part 3 — Git and GitHub](parts/03-git.qmd)
 - [Part 4 — Files you will meet](parts/04-file-formats.qmd)
 
-**Only Part 1 gates a first practical.** If you are short on time, read that
-one properly and treat the rest of this deck as a preview of what is coming.
+**You need only Part 1 before a first practical.** If you have little time,
+read Part 1 carefully, and use the rest of this deck as a preview.
 
 ::: {.notes}
 If presenting live: say this out loud before moving on. The deck is
@@ -56,18 +56,19 @@ corresponding part is for, not a reason to improvise an answer here.
 
 ## Why a terminal at all?
 
-A fair question before spending an evening on this.
+A fair question, before you spend an evening on this.
 
-- **The tools only exist there.** Most scientific software has no graphical
-  interface — and a program that runs from a command line can be run a
-  thousand times by another program. One that needs a human to click cannot.
-- **It is a record.** A command can be pasted into a methods section, rerun
-  next year, and checked by someone else. A sequence of clicks cannot.
-- **It scales without changing.** The command that handles one file handles
-  four hundred, unmodified.
+- **Many tools exist only there.** Most scientific software has no graphical
+  interface. Another program can run a command-line program a thousand times.
+  It cannot run a program that needs a person to click.
+- **It is a record.** You can copy a command into a methods section, run it
+  again next year, and someone else can check it. You cannot do this with
+  clicks.
+- **It works the same for many files.** The command for one file also works
+  for four hundred files, without changes.
 
-The cost: nothing is discoverable. A terminal shows a cursor and waits. That
-gap is what Part 1 closes.
+The disadvantage: a terminal does not show what it can do. It shows a cursor
+and waits. Part 1 teaches you what to type.
 
 # Part 1 — The command line
 
@@ -75,15 +76,15 @@ gap is what Part 1 closes.
 
 ![Own figure.](figures/prompt-anatomy.svg){fig-alt="A terminal prompt: user1 at machine, colon, tilde slash projects, dollar sign, block cursor. A key identifies user1 as the username, machine as the computer, the path as where you are, and the dollar sign as the shell being ready."}
 
-The one part worth watching is **where you currently are** — it changes as you
-move, and it answers the question that causes most early confusion.
+The most important part is **where you are now**. It changes as you move
+around, and it answers the question that confuses beginners most often.
 
 ## The filesystem is one tree
 
 ![Own figure.](figures/filesystem-tree.svg){fig-alt="A tree diagram rooted at a single forward slash, branching into home, bin and etc. home branches into user directories; one user directory branches into Documents, Downloads and files."}
 
-No drive letters. Everything — a second disk, a USB stick, a network share —
-is a directory *somewhere inside this one tree*. And it is
+There are no drive letters. Everything — a second disk, a USB stick, a network
+drive — is a directory *somewhere inside this one tree*. And names are
 **case-sensitive**: `Data.csv` and `data.csv` are two different files.
 
 ## Moving around
@@ -100,15 +101,15 @@ ls -l
 -rw-r--r-- 1 user1 staff 6 Sep 26 07:08 notes.txt
 ```
 
-`pwd`, `ls` and `cd` answer *where am I* and *what is here* — the two
-questions worth asking before anything else.
+`pwd`, `ls` and `cd` answer *where am I?* and *what is here?* Ask these two
+questions before you do anything else.
 
 ::: {.callout-tip}
-## Press Tab. Every time, not just when stuck.
+## Press Tab. Every time, not only when you are stuck.
 
-Typing a filename from memory is a guess. Letting the shell complete it is not
-— it is spelled right or it does not exist. This is worth repeating because
-it is the single most common thing people forget under time pressure.
+A file name typed from memory is a guess. A name that the shell completed is
+not: either it is spelled correctly, or the file does not exist. We repeat this
+because people forget it most often when they are in a hurry.
 :::
 
 ## Parameters change what a command does
@@ -124,24 +125,24 @@ alpha,12
 beta,7
 ```
 
-Four parameters, four jobs: `-t,` the delimiter, `-k2` which column, `-n`
-compare as numbers, `-r` largest first. Drop `-n` and `103` sorts *before*
+Four parameters, four jobs: `-t,` the separator, `-k2` which column, `-n`
+compare as numbers, `-r` largest first. Without `-n`, `103` comes *before*
 `12`, because as text it starts with a smaller character.
 
 ## Never put a space in a name you create
 
-The shell splits what you type on whitespace — so a space inside a filename
-is indistinguishable from a space between two separate arguments.
+The shell splits what you type at each space. So it cannot tell a space
+inside a file name from a space between two arguments.
 
 ```text
 cd lab notebook
 bash: cd: lab: No such file or directory
 ```
 
-`cd` saw **two** arguments, not one. Quoting (`cd "lab notebook"`) fixes it,
-but the real fix is upstream: use `lab_notebook` and the problem never comes
-up. Graphical file managers and Windows both allow spaces freely — the
-terminal is where that difference first bites.
+`cd` received **two** arguments, not one. Quotes (`cd "lab notebook"`) fix
+it, but the real fix is simpler: use `lab_notebook`, and the problem never
+occurs. Graphical file managers and Windows allow spaces in names, so you meet
+this problem for the first time in the terminal.
 
 ## Pipes: small tools, chained
 
@@ -155,9 +156,10 @@ printf "banana\napple\ncherry\napple\n" | sort | uniq -c | sort -rn
       1 banana
 ```
 
-Read left to right, as a sentence: sort it, count the repeats, sort *that*
-numerically. None of these four tools knows the others exist — the pipe is
-what turns simple pieces into an answer nobody wrote a program for.
+Read it from left to right, as a sentence: sort, count the repeated lines,
+then sort *that result* as numbers. None of these four tools knows about the
+others. With the pipe, simple tools answer a question that no single program
+was written for.
 
 ## Wildcards, briefly
 
@@ -171,24 +173,24 @@ logs/a.log
 logs/b.log
 ```
 
-`*` matches any run of characters. Check what it will match with `ls` before
-ever pointing it at `rm`.
+`*` matches any number of characters. Before you use it with `rm`, check with
+`ls` which files it matches.
 
 ## Part 1, in one line
 
 Terminal, tree, parameters, pipes, wildcards. **[The full page →](parts/01-command-line.qmd)**
-has the backslash line-continuation, `stdin`/`stdout`/`stderr`, reading errors,
-a short section on `$HOME`-style variables, and a checklist to test yourself
-against.
+also covers the backslash at the end of a line, `stdin`/`stdout`/`stderr`, how
+to read error messages, a short section on variables such as `$HOME`, and a
+checklist to test yourself.
 
 # Part 2 — Installing and managing tools
 
 ## The problem environments solve
 
-Two projects can genuinely need **different, incompatible versions** of the
-same dependency. An **environment** keeps one project's tools from breaking
-another's — and if it is written down in a file, someone else can rebuild it
-and get the same result.
+Two projects can need **different versions of the same dependency**, and the
+versions may not work together. An **environment** stops the tools of one
+project from breaking the tools of another. If the environment is written down
+in a file, someone else can rebuild it and get the same result.
 
 ```{.bash .no-run}
 pixi init myproject && cd myproject
@@ -196,8 +198,8 @@ pixi add python samtools
 pixi run python --version
 ```
 
-No "activation" — `pixi run` uses this project's tools because you are
-standing in this project's directory.
+You do not need to "activate" anything. `pixi run` uses the tools of this
+project because you are in the directory of this project.
 
 ::: {.notes}
 Not executed: installing needs the network and takes minutes. The full page
@@ -207,9 +209,9 @@ someone hands you instructions written the old way.
 
 ## Part 2, in one line
 
-`pixi.toml` says what you asked for; `pixi.lock` says exactly what you got.
-Commit both. **[The full page →](parts/02-packages.qmd)** covers conda and
-mamba too — you will meet both in documentation even if you never install
+`pixi.toml` says what you asked for, and `pixi.lock` says exactly what you got.
+Commit both files. **[The full page →](parts/02-packages.qmd)** also covers
+conda and mamba. You will see both in documentation, even if you never install
 them.
 
 # Part 3 — Git and GitHub
@@ -241,10 +243,10 @@ If a team shares one repository, this happens in the first hour:
  ! [rejected]        main -> main (fetch first)
 ```
 
-Nothing is lost — Git is refusing to overwrite someone else's work with
-yours. The fix, and the habit worth having from the start: work on a
-**branch**, push it, and open a **pull request** for someone to read before
-it joins `main`.
+Nothing is lost. Git refuses to overwrite someone else's work with yours. The
+fix, and a good habit from the start: work on a **branch**, push it, and open a
+**pull request**, so that someone reads your changes before they go into
+`main`.
 
 ::: {.notes}
 The GitHub side (pushing a branch, the Compare & pull request button) is
@@ -253,31 +255,31 @@ exact buttons move, so it is described as "what to look for," not a fixed
 click path.
 :::
 
-## Your GitHub profile is worth curating
+## Take care of your GitHub profile
 
-**You will need an account.** At least one person per team, for the shared
-repository to exist — in practice, everyone, since each of you pushes your
-own commits.
+**You will need an account.** At least one person per team needs one, so that
+the shared repository can exist. In practice everyone needs one, because each
+of you pushes your own commits.
 
-Treat it as more than a requirement: pinned repositories, a short bio, a
-clear README on each project — this becomes a portfolio you did not realise
-you were building. One real example:
+See it as more than a requirement. With pinned repositories, a short
+biography and a clear README for each project, your profile becomes a
+portfolio. One real example:
 **[github.com/jonas-fuchs](https://github.com/jonas-fuchs)**.
 
-For a job in this field, that can say more than a CV — it is evidence you can
-do the work, not a claim that you can.
+When you apply for a job in this field, your profile can say more than a CV. It
+shows that you can do the work, instead of only claiming it.
 
 ::: {.notes}
-Worth slowing down on if presenting live — this is a genuinely useful thing
-for a UAS bioinformatics cohort to hear early, not a footnote. It does not
-need to happen this semester; it needs to *start*.
+If presenting live, slow down here. Students benefit from hearing this early;
+it is not a footnote. The profile does not need to be finished this semester,
+but it needs to *start*.
 :::
 
 ## Part 3, in one line
 
-`add` → `commit` → `push`, and branch before you push if anyone else shares
-the repository. **[The full page →](parts/03-git.qmd)** covers diff, restore,
-merge conflicts, and the full branch-to-pull-request walkthrough.
+`add` → `commit` → `push`. If other people share the repository, create a
+branch before you push. **[The full page →](parts/03-git.qmd)** covers diff,
+restore, merge conflicts, and every step from a branch to a pull request.
 
 # Part 4 — Files you will meet
 
@@ -300,59 +302,59 @@ print(json.dumps(d))
 {"sample": "A1", "passed": true, "count": 1420}
 ```
 
-**Markdown** is what READMEs and GitHub pages are written in. **JSON** is how
-tools hand structured results to each other — six types, no comments, no
-trailing commas.
+READMEs and GitHub pages are written in **Markdown**. Tools use **JSON** to
+pass structured results to each other: six data types, no comments, no comma
+after the last item.
 
 ## Part 4, in one line
 
-Plus CSV/TSV, why Excel silently damages data files, and the two invisible
-things — line endings and encoding — that make a text file misbehave.
+Also CSV/TSV, how Excel damages data files without telling you, and the two
+invisible things that cause errors in text files: line endings and encoding.
 **[The full page →](parts/04-file-formats.qmd)**
 
 # Before your first practical
 
-## Getting a terminal, cheapest first {.smaller}
+## Getting a terminal, easiest first {.smaller}
 
-Reading the commands is not the same as running them, so the first job is
-somewhere to type. Any of these will do.
+Reading the commands is not the same as running them. So first you need a place
+to type them. Any of these works.
 
 | | |
 |---|---|
-| **Nothing to install** | [webvm.io](https://webvm.io) boots a real Debian Linux in a browser tab — no account, nothing downloaded. Enough for all of Part 1. |
+| **Nothing to install** | [webvm.io](https://webvm.io) starts a real Debian Linux in a browser tab. No account, no download. Enough for all of Part 1. |
 | **On a Mac** | You already have one: *Applications → Utilities → Terminal*. |
-| **On Windows** | Install **WSL2**: `wsl --install` in PowerShell as administrator, then reboot. It is a real Ubuntu, and everything here then applies to you unchanged. |
-| **Getting serious** | Install Linux on a machine of your own. Nothing here requires it; everything here is easier once you have. |
+| **On Windows** | Install **WSL2**: run `wsl --install` in PowerShell as administrator, then restart. It is a real Ubuntu, and everything here then works for you without changes. |
+| **The long-term way** | Install Linux on your own computer. Nothing here needs it, but everything here is easier with it. |
 
-The browser one forgets everything when you close the tab and is not the place
-to install software — so Part 2 onward wants one of the other three.
+The browser version forgets everything when you close the tab, and you cannot
+install software in it. So from Part 2 on, you need one of the other three.
 
 ::: {.notes}
-The point of the table is that nobody is blocked. The commonest reason someone
-arrives having read nothing is that step one was an install they did not have
-time for -- so the first row exists to remove that excuse entirely.
+The point of the table is that nobody is blocked. The most common reason why
+someone arrives having read nothing is that step one was an installation they
+had no time for. The first row removes that reason.
 
 WSL2 is still the right answer for a Windows user who will do this more than
 once: it is a real Ubuntu, and the alternative is software that has no Windows
 build at all.
 
-Worth saying out loud: some courses hand you a prepared machine, and if yours
-does, none of this is required of you.
+Say this out loud: some courses give you a prepared machine, and if yours
+does, you do not need any of this.
 :::
 
-## What to actually do this week
+## What to do this week
 
-- **Get a terminal**, by whichever route above costs you least.
-- Work through **[Part 1](parts/01-command-line.qmd)** properly — *typing* the
-  commands — and check yourself against its list at the end.
-- Install **[VS Code](https://code.visualstudio.com)** — and on Windows, its
+- **Get a terminal**, in the easiest of the ways above.
+- Work through **[Part 1](parts/01-command-line.qmd)** carefully. *Type* the
+  commands, and check yourself against the list at the end.
+- Install **[VS Code](https://code.visualstudio.com)**, and on Windows its
   **WSL** extension.
-- Come back to Parts 2–4 when you actually need them. Nobody expects them
-  memorised in advance.
+- Come back to Parts 2–4 when you need them. Nobody expects you to know them
+  in advance.
 
-If your course provides a prepared machine, none of the setup is required of
-you. The hour spent typing into a terminal of your own is still what makes the
-prepared one feel ordinary rather than magic.
+If your course gives you a prepared machine, you do not need to set anything
+up. But an hour of typing in a terminal of your own still helps: afterwards,
+the prepared machine feels familiar and not mysterious.
 
 ::: {.notes}
 If presenting live, this is the slide to slow down on — it is the one with an

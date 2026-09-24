@@ -172,6 +172,13 @@ material arrives through `instructor/incoming/` (gitignored here — see above).
 
 - **Assume no command line experience.** No prior Linux, no terminal, no
   programming.
+- **Write in plain English, for readers whose first language is not English**
+  (2026-09-24). Orwell's six rules first, then the parts of Simplified Technical
+  English that suit instructions: one idea per sentence, instructions as
+  commands, one word for one meaning, no idioms or phrasal verbs. Technical terms
+  stay. All four parts and the deck were rewritten this way; keep new text in
+  the same style. **Code and output blocks must stay byte-identical in a
+  language edit** — the test harness runs them, so check it rather than assume it.
 - **Written material is English.** The consuming modules are taught in German,
   so structural terms get a German gloss in parentheses on first use — terminal
   (dt. *Terminal*), wildcard (dt. *Platzhalter*). Sparingly: this is a reference,

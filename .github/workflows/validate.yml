@@ -17,7 +17,11 @@ on:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    # Pinned rather than ubuntu-latest (2026-09-30): GitHub moves ubuntu-latest
+    # to 26.04 between 19 Oct and 19 Nov 2026, in the middle of teaching.
+    # Pinning means the next move happens when we choose it, between
+    # semesters. Revisit when a newer LTS image is wanted.
+    runs-on: ubuntu-26.04
 
     steps:
       - uses: actions/checkout@v6
@@ -72,7 +76,11 @@ jobs:
     # Only main, and never from a pull request -- a PR from a fork must not be
     # able to publish, nor to read the Cloudflare token.
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    # Pinned rather than ubuntu-latest (2026-09-30): GitHub moves ubuntu-latest
+    # to 26.04 between 19 Oct and 19 Nov 2026, in the middle of teaching.
+    # Pinning means the next move happens when we choose it, between
+    # semesters. Revisit when a newer LTS image is wanted.
+    runs-on: ubuntu-26.04
 
     steps:
       # Deploy exactly the bytes that were validated, rather than re-rendering
